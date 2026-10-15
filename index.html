@@ -1,1 +1,1167 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VENTHA Micheladas | Grupo RDM</title>
+
+<style>
+:root {
+    --gold: #d4af37;
+    --black: #101010;
+    --panel: #1c1c1c;
+    --text: #f5f5f5;
+    --muted: #bdbdbd;
+    --red: #ff7777;
+    --green: #81c784;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--black);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background: #080808;
+    padding: 22px 12px;
+    text-align: center;
+    border-bottom: 2px solid var(--gold);
+}
+
+.logo {
+    color: var(--gold);
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: var(--muted);
+    margin-top: 7px;
+    font-size: 13px;
+}
+
+main {
+    width: 94%;
+    max-width: 1100px;
+    margin: 24px auto;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.section {
+    background: var(--panel);
+    width: 100%;
+    margin: 18px auto;
+    border: 1px solid #66562b;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+h2 {
+    color: var(--gold);
+    font-size: 20px;
+    margin-top: 0;
+}
+
+input, select, button {
+    padding: 11px;
+    margin: 5px 0;
+    border-radius: 7px;
+    font: inherit;
+}
+
+input, select {
+    width: 100%;
+    min-width: 0;
+    color: white;
+    background: #292929;
+    border: 1px solid #555;
+}
+
+button {
+    background: var(--gold);
+    color: #111;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    filter: brightness(1.12);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: #454545;
+    color: white;
+}
+
+.btn-danger {
+    background: #852b2b;
+    color: white;
+}
+
+.btn-small {
+    padding: 7px 9px;
+    font-size: 12px;
+    margin: 2px;
+}
+
+label {
+    display: block;
+    text-align: left;
+    font-size: 13px;
+    color: #ddd;
+    margin-bottom: 9px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+#loginBox {
+    max-width: 430px;
+    margin: 65px auto;
+    text-align: center;
+}
+
+#loginBox h2 {
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 12px;
+}
+
+#loginBox button {
+    width: 100%;
+}
+
+#loginError, #mensaje {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+#loginError {
+    color: var(--red);
+}
+
+#mensaje {
+    font-weight: bold;
+}
+
+.userbar, .section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.userbar button, .section-heading button {
+    margin: 0;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.stat {
+    background: var(--panel);
+    border: 1px solid #66562b;
+    border-radius: 10px;
+    padding: 15px 8px;
+    text-align: center;
+}
+
+.stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.stat strong {
+    display: block;
+    color: var(--gold);
+    font-size: 25px;
+    margin-top: 7px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    font-size: 14px;
+}
+
+th, td {
+    border-bottom: 1px solid #444;
+    padding: 11px 8px;
+    text-align: left;
+}
+
+th {
+    color: var(--gold);
+    background: #111;
+}
+
+.low-stock {
+    color: var(--red);
+    font-weight: bold;
+}
+
+.good-stock {
+    color: var(--green);
+}
+
+.note {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 22px;
+}
+
+footer {
+    color: #777;
+    text-align: center;
+    font-size: 12px;
+    padding: 22px;
+}
+
+@media (max-width: 650px) {
+    .logo {
+        font-size: 23px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full {
+        grid-column: auto;
+    }
+
+    .section {
+        padding: 14px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 9px 6px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">VENTHA MICHELADAS</div>
+    <div class="subtitle">GRUPO RDM · CONTROL DE INVENTARIO</div>
+</header>
+
+<main>
+
+<!-- INICIO DE SESIÓN -->
+<section id="loginBox" class="section">
+    <h2>Iniciar sesión</h2>
+
+    <p class="note">
+        Acceso al módulo administrativo.
+    </p>
+
+    <form id="loginForm">
+        <label>
+            Usuario
+            <input id="usuarioInput"
+                   autocomplete="username"
+                   placeholder="Usuario"
+                   required>
+        </label>
+
+        <label>
+            Contraseña
+            <input id="claveInput"
+                   type="password"
+                   autocomplete="current-password"
+                   placeholder="Contraseña"
+                   required>
+        </label>
+
+        <button type="submit">Ingresar</button>
+    </form>
+
+    <div id="loginError" role="alert"></div>
+</section>
+
+<!-- APLICACIÓN -->
+<div id="sistema" class="hidden">
+
+    <section class="section">
+        <div class="userbar">
+            <div>
+                Usuario activo:
+                <strong id="usuarioActivo"></strong>
+            </div>
+
+            <button class="btn-secondary"
+                    type="button"
+                    onclick="cerrarSesion()">
+                Cerrar sesión
+            </button>
+        </div>
+
+        <div id="mensaje" role="status" aria-live="polite"></div>
+
+        <p class="note">
+            Esta versión controla productos y existencias.
+            Las ventas y los tickets se incorporarán posteriormente.
+        </p>
+    </section>
+
+    <!-- RESUMEN -->
+    <div class="stats">
+        <div class="stat">
+            <span>Productos registrados</span>
+            <strong id="totalProductos">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Cervezas mega</span>
+            <strong id="totalMega">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Cervezas medias</span>
+            <strong id="totalMedias">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Vasos disponibles</span>
+            <strong id="totalVasos">0</strong>
+        </div>
+    </div>
+
+    <!-- AGREGAR PRODUCTO -->
+    <section class="section">
+        <h2>＋ Agregar producto</h2>
+
+        <form id="formProducto" class="form-grid">
+
+            <label>
+                Categoría
+                <select id="categoriaNueva" required>
+                    <option value="mega">Cerveza mega</option>
+                    <option value="media">Cerveza media</option>
+                    <option value="refresco">Refresco</option>
+                    <option value="vaso">Vasos</option>
+                </select>
+            </label>
+
+            <label>
+                Marca o nombre
+                <input id="nombreNuevo"
+                       placeholder="Ej. Corona, Coca-Cola"
+                       maxlength="60"
+                       required>
+            </label>
+
+            <label>
+                Presentación
+                <input id="presentacionNueva"
+                       placeholder="Ej. 1.2 L, 600 ml, vaso 1 L"
+                       maxlength="40">
+            </label>
+
+            <label>
+                Unidad de conteo
+                <select id="unidadNueva" required>
+                    <option value="botellas">Botellas</option>
+                    <option value="latas">Latas</option>
+                    <option value="piezas">Piezas</option>
+                    <option value="vasos">Vasos</option>
+                </select>
+            </label>
+
+            <label class="full">
+                Existencia inicial
+                <input id="cantidadNueva"
+                       type="number"
+                       min="0"
+                       step="1"
+                       value="0"
+                       required>
+            </label>
+
+            <button class="full" type="submit">
+                Agregar al inventario
+            </button>
+        </form>
+    </section>
+
+    <!-- REABASTECER -->
+    <section class="section">
+        <h2>＋ Reabastecer inventario</h2>
+
+        <form id="formReabastecer" class="form-grid">
+
+            <label class="full">
+                Seleccionar producto
+                <select id="productoReabastecer" required>
+                    <option value="">Selecciona un producto</option>
+                </select>
+            </label>
+
+            <label>
+                Cantidad recibida
+                <input id="cantidadReabastecer"
+                       type="number"
+                       min="1"
+                       step="1"
+                       placeholder="Ej. 12"
+                       required>
+            </label>
+
+            <div>
+                <label>Registrar entrada</label>
+                <button type="submit" style="width:100%">
+                    Reabastecer
+                </button>
+            </div>
+        </form>
+
+        <p class="note">
+            Registra las unidades individuales que recibes.
+            Por ejemplo, un cartón de 12 botellas equivale a 12
+            botellas si tu inventario se cuenta por botella.
+        </p>
+    </section>
+
+    <!-- INVENTARIO -->
+    <section class="section">
+        <div class="section-heading">
+            <h2>Inventario actual</h2>
+
+            <button type="button"
+                    class="btn-secondary"
+                    onclick="renderizar()">
+                Actualizar
+            </button>
+        </div>
+
+        <label>
+            Filtrar por categoría
+            <select id="filtroCategoria">
+                <option value="todos">Todas las categorías</option>
+                <option value="mega">Cervezas mega</option>
+                <option value="media">Cervezas medias</option>
+                <option value="refresco">Refrescos</option>
+                <option value="vaso">Vasos</option>
+            </select>
+        </label>
+
+        <label>
+            Buscar producto
+            <input id="buscarProducto"
+                   placeholder="Escribe una marca o presentación">
+        </label>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Producto</th>
+                        <th>Existencias</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaInventario"></tbody>
+            </table>
+        </div>
+
+        <p class="note">
+            Las existencias en rojo indican cinco unidades o menos.
+            Este umbral es provisional.
+        </p>
+    </section>
+
+    <!-- AJUSTAR CONTEO -->
+    <section class="section">
+        <h2>Corregir conteo físico</h2>
+
+        <p class="note">
+            Usa esta función cuando cuentes físicamente los productos.
+            La nueva cantidad sustituye a la existencia anterior.
+        </p>
+
+        <form id="formCorreccion" class="form-grid">
+            <label class="full">
+                Producto
+                <select id="productoCorreccion" required>
+                    <option value="">Selecciona un producto</option>
+                </select>
+            </label>
+
+            <label class="full">
+                Cantidad contada
+                <input id="cantidadCorreccion"
+                       type="number"
+                       min="0"
+                       step="1"
+                       required>
+            </label>
+
+            <button class="full" type="submit">
+                Guardar conteo físico
+            </button>
+        </form>
+    </section>
+
+    <!-- RESPALDO -->
+    <section class="section">
+        <h2>Respaldo de datos</h2>
+
+        <p class="note">
+            Descarga una copia del inventario actual para guardarla
+            fuera del navegador.
+        </p>
+
+        <button type="button" onclick="exportarRespaldo()">
+            Exportar inventario
+        </button>
+    </section>
+
+</div>
+</main>
+
+<footer>
+    VENTHA · GRUPO RDM · Versión administrativa 1.0
+</footer>
+
+<script>
+"use strict";
+
+// ==========================================
+// CONFIGURACIÓN PROVISIONAL DE DESARROLLO
+// No utilizar como autenticación de producción.
+// ==========================================
+
+const USUARIO_ADMIN = "admin";
+const CLAVE_ADMIN = "RDM2026!";
+
+const CLAVE_INVENTARIO = "venthaMicheladasInventarioV1";
+
+const categorias = {
+    mega: "Cerveza mega",
+    media: "Cerveza media",
+    refresco: "Refresco",
+    vaso: "Vasos"
+};
+
+let inventario = cargarInventario();
+let sesionActiva = false;
+let mensajeTimer;
+
+// ==========================================
+// ALMACENAMIENTO
+// ==========================================
+
+function cargarInventario() {
+    try {
+        const datos = localStorage.getItem(CLAVE_INVENTARIO);
+
+        if (!datos) return [];
+
+        const productos = JSON.parse(datos);
+
+        if (!Array.isArray(productos)) return [];
+
+        return productos.filter(p =>
+            p &&
+            typeof p.id === "string" &&
+            typeof p.nombre === "string" &&
+            Object.hasOwn(categorias, p.categoria) &&
+            Number.isSafeInteger(p.stock) &&
+            p.stock >= 0
+        );
+    } catch (error) {
+        console.error("Error al cargar el inventario:", error);
+        return [];
+    }
+}
+
+function guardarInventario() {
+    try {
+        localStorage.setItem(
+            CLAVE_INVENTARIO,
+            JSON.stringify(inventario)
+        );
+
+        return true;
+    } catch (error) {
+        console.error(error);
+
+        mostrarMensaje(
+            "No se pudieron guardar los datos. Exporta un respaldo.",
+            true
+        );
+
+        return false;
+    }
+}
+
+// ==========================================
+// INICIO DE SESIÓN
+// ==========================================
+
+document.getElementById("loginForm")
+    .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const usuario = document.getElementById("usuarioInput")
+            .value.trim();
+
+        const clave = document.getElementById("claveInput").value;
+
+        if (
+            usuario === USUARIO_ADMIN &&
+            clave === CLAVE_ADMIN
+        ) {
+            sesionActiva = true;
+
+            document.getElementById("loginBox")
+                .classList.add("hidden");
+
+            document.getElementById("sistema")
+                .classList.remove("hidden");
+
+            document.getElementById("usuarioActivo")
+                .textContent = usuario;
+
+            document.getElementById("loginError")
+                .textContent = "";
+
+            renderizar();
+        } else {
+            document.getElementById("loginError")
+                .textContent = "Usuario o contraseña incorrectos.";
+        }
+    });
+
+function cerrarSesion() {
+    sesionActiva = false;
+
+    document.getElementById("sistema").classList.add("hidden");
+    document.getElementById("loginBox").classList.remove("hidden");
+    document.getElementById("loginForm").reset();
+    document.getElementById("usuarioActivo").textContent = "";
+}
+
+function exigirSesion() {
+    if (!sesionActiva) {
+        throw new Error("Inicia sesión para continuar.");
+    }
+}
+
+// ==========================================
+// MENSAJES
+// ==========================================
+
+function mostrarMensaje(texto, error = false) {
+    const elemento = document.getElementById("mensaje");
+
+    elemento.textContent = texto;
+    elemento.style.color = error ? "#ff7777" : "#81c784";
+
+    clearTimeout(mensajeTimer);
+
+    mensajeTimer = setTimeout(() => {
+        elemento.textContent = "";
+    }, 5000);
+}
+
+// ==========================================
+// AGREGAR PRODUCTO
+// ==========================================
+
+document.getElementById("formProducto")
+    .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        try {
+            exigirSesion();
+
+            const categoria =
+                document.getElementById("categoriaNueva").value;
+
+            const nombre =
+                document.getElementById("nombreNuevo").value.trim();
+
+            const presentacion =
+                document.getElementById("presentacionNueva")
+                    .value.trim();
+
+            const unidad =
+                document.getElementById("unidadNueva").value;
+
+            const stock = Number(
+                document.getElementById("cantidadNueva").value
+            );
+
+            if (!Object.hasOwn(categorias, categoria)) {
+                throw new Error("Selecciona una categoría válida.");
+            }
+
+            if (!nombre || !Number.isSafeInteger(stock) || stock < 0) {
+                throw new Error("Revisa el nombre y la cantidad inicial.");
+            }
+
+            const duplicado = inventario.some(p =>
+                p.categoria === categoria &&
+                p.nombre.toLowerCase() === nombre.toLowerCase() &&
+                p.presentacion.toLowerCase() ===
+                    presentacion.toLowerCase()
+            );
+
+            if (duplicado) {
+                throw new Error(
+                    "El producto ya existe. Utiliza Reabastecer."
+                );
+            }
+
+            const producto = {
+                id: crearId(),
+                categoria,
+                nombre,
+                presentacion,
+                unidad,
+                stock
+            };
+
+            inventario.push(producto);
+
+            if (!guardarInventario()) {
+                inventario.pop();
+                return;
+            }
+
+            event.target.reset();
+
+            document.getElementById("cantidadNueva").value = 0;
+
+            renderizar();
+
+            mostrarMensaje("Producto agregado correctamente.");
+
+        } catch (error) {
+            mostrarMensaje(error.message, true);
+        }
+    });
+
+// ==========================================
+// REABASTECER INVENTARIO
+// ==========================================
+
+document.getElementById("formReabastecer")
+    .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        try {
+            exigirSesion();
+
+            const id =
+                document.getElementById("productoReabastecer").value;
+
+            const cantidad = Number(
+                document.getElementById("cantidadReabastecer").value
+            );
+
+            const producto = inventario.find(p => p.id === id);
+
+            if (!producto) {
+                throw new Error("Selecciona un producto válido.");
+            }
+
+            if (!Number.isSafeInteger(cantidad) || cantidad < 1) {
+                throw new Error("La cantidad debe ser un entero positivo.");
+            }
+
+            if (!Number.isSafeInteger(producto.stock + cantidad)) {
+                throw new Error("La cantidad supera el límite permitido.");
+            }
+
+            producto.stock += cantidad;
+
+            if (!guardarInventario()) {
+                producto.stock -= cantidad;
+                return;
+            }
+
+            event.target.reset();
+
+            renderizar();
+
+            mostrarMensaje(
+                "Entrada registrada: " + producto.nombre +
+                " (+" + cantidad + " " + producto.unidad + ")."
+            );
+
+        } catch (error) {
+            mostrarMensaje(error.message, true);
+        }
+    });
+
+// ==========================================
+// CORREGIR CONTEO FÍSICO
+// ==========================================
+
+document.getElementById("formCorreccion")
+    .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        try {
+            exigirSesion();
+
+            const id =
+                document.getElementById("productoCorreccion").value;
+
+            const nuevaCantidad = Number(
+                document.getElementById("cantidadCorreccion").value
+            );
+
+            const producto = inventario.find(p => p.id === id);
+
+            if (!producto) {
+                throw new Error("Selecciona un producto válido.");
+            }
+
+            if (
+                !Number.isSafeInteger(nuevaCantidad) ||
+                nuevaCantidad < 0
+            ) {
+                throw new Error("La cantidad debe ser un entero no negativo.");
+            }
+
+            const anterior = producto.stock;
+
+            const confirmar = confirm(
+                "¿Confirmas el conteo físico?\n\n" +
+                "Producto: " + producto.nombre + "\n" +
+                "Existencia anterior: " + anterior + "\n" +
+                "Nueva existencia: " + nuevaCantidad
+            );
+
+            if (!confirmar) return;
+
+            producto.stock = nuevaCantidad;
+
+            if (!guardarInventario()) {
+                producto.stock = anterior;
+                return;
+            }
+
+            renderizar();
+
+            mostrarMensaje("Conteo físico actualizado.");
+
+        } catch (error) {
+            mostrarMensaje(error.message, true);
+        }
+    });
+
+// ==========================================
+// TABLA DE INVENTARIO
+// ==========================================
+
+function renderizar() {
+    if (!sesionActiva) return;
+
+    const tabla = document.getElementById("tablaInventario");
+
+    const filtro =
+        document.getElementById("filtroCategoria").value;
+
+    const busqueda =
+        document.getElementById("buscarProducto")
+            .value.trim().toLowerCase();
+
+    const productos = inventario.filter(p => {
+        const categoriaCorrecta =
+            filtro === "todos" || p.categoria === filtro;
+
+        const texto = (
+            p.nombre + " " + p.presentacion + " " + p.unidad
+        ).toLowerCase();
+
+        return categoriaCorrecta && texto.includes(busqueda);
+    });
+
+    tabla.replaceChildren();
+
+    if (productos.length === 0) {
+        const fila = tabla.insertRow();
+        const celda = fila.insertCell();
+
+        celda.colSpan = 4;
+        celda.className = "empty";
+        celda.textContent = "No hay productos para mostrar.";
+    }
+
+    productos.forEach(p => {
+        const fila = tabla.insertRow();
+
+        agregarCelda(fila, categorias[p.categoria]);
+
+        agregarCelda(
+            fila,
+            p.nombre +
+            (p.presentacion ? " · " + p.presentacion : "")
+        );
+
+        const celdaStock = fila.insertCell();
+
+        celdaStock.textContent = p.stock + " " + p.unidad;
+
+        celdaStock.className =
+            p.stock <= 5 ? "low-stock" : "good-stock";
+
+        const acciones = fila.insertCell();
+
+        const botonEntrada = crearBoton(
+            "+ Entrada",
+            "btn-small",
+            () => {
+                document.getElementById("productoReabastecer").value = p.id;
+
+                document.getElementById("cantidadReabastecer").focus();
+
+                document.getElementById("formReabastecer")
+                    .scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+            }
+        );
+
+        const botonEliminar = crearBoton(
+            "Eliminar",
+            "btn-danger btn-small",
+            () => eliminarProducto(p.id)
+        );
+
+        acciones.append(botonEntrada, botonEliminar);
+    });
+
+    actualizarSelectores();
+    actualizarResumen();
+}
+
+function agregarCelda(fila, texto) {
+    const celda = fila.insertCell();
+    celda.textContent = texto;
+    return celda;
+}
+
+function crearBoton(texto, clase, accion) {
+    const boton = document.createElement("button");
+
+    boton.type = "button";
+    boton.textContent = texto;
+    boton.className = clase;
+    boton.addEventListener("click", accion);
+
+    return boton;
+}
+
+// ==========================================
+// LISTAS DE PRODUCTOS
+// ==========================================
+
+function actualizarSelectores() {
+    const ids = [
+        "productoReabastecer",
+        "productoCorreccion"
+    ];
+
+    ids.forEach(id => {
+        const selector = document.getElementById(id);
+        const anterior = selector.value;
+
+        selector.replaceChildren();
+
+        const inicial = document.createElement("option");
+
+        inicial.value = "";
+        inicial.textContent = "Selecciona un producto";
+
+        selector.appendChild(inicial);
+
+        inventario.forEach(p => {
+            const opcion = document.createElement("option");
+
+            opcion.value = p.id;
+
+            opcion.textContent =
+                categorias[p.categoria] + " · " +
+                p.nombre +
+                (p.presentacion ? " · " + p.presentacion : "") +
+                " (" + p.stock + " " + p.unidad + ")";
+
+            selector.appendChild(opcion);
+        });
+
+        if (inventario.some(p => p.id === anterior)) {
+            selector.value = anterior;
+        }
+    });
+}
+
+// ==========================================
+// INDICADORES
+// ==========================================
+
+function actualizarResumen() {
+    const sumar = categoria =>
+        inventario
+            .filter(p => p.categoria === categoria)
+            .reduce((total, p) => total + p.stock, 0);
+
+    document.getElementById("totalProductos").textContent =
+        inventario.length;
+
+    document.getElementById("totalMega").textContent =
+        sumar("mega");
+
+    document.getElementById("totalMedias").textContent =
+        sumar("media");
+
+    document.getElementById("totalVasos").textContent =
+        sumar("vaso");
+}
+
+// ==========================================
+// ELIMINAR PRODUCTO
+// ==========================================
+
+function eliminarProducto(id) {
+    try {
+        exigirSesion();
+
+        const indice = inventario.findIndex(p => p.id === id);
+
+        if (indice < 0) return;
+
+        const producto = inventario[indice];
+
+        if (!confirm(
+            "¿Eliminar " + producto.nombre +
+            " del catálogo?\nEsta acción no registra una salida."
+        )) return;
+
+        inventario.splice(indice, 1);
+
+        if (!guardarInventario()) {
+            inventario.splice(indice, 0, producto);
+            return;
+        }
+
+        renderizar();
+
+        mostrarMensaje("Producto eliminado del catálogo.");
+
+    } catch (error) {
+        mostrarMensaje(error.message, true);
+    }
+}
+
+// ==========================================
+// EXPORTAR RESPALDO
+// ==========================================
+
+function exportarRespaldo() {
+    try {
+        exigirSesion();
+
+        const datos = {
+            sistema: "VENTHA Micheladas",
+            version: "1.0",
+            fechaExportacion: new Date().toISOString(),
+            inventario
+        };
+
+        const archivo = new Blob(
+            [JSON.stringify(datos, null, 2)],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(archivo);
+        const enlace = document.createElement("a");
+
+        enlace.href = url;
+        enlace.download = "respaldo_inventario_ventha.json";
+
+        enlace.click();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        mostrarMensaje("Respaldo preparado para guardar.");
+
+    } catch (error) {
+        mostrarMensaje(error.message, true);
+    }
+}
+
+// ==========================================
+// FILTROS
+// ==========================================
+
+document.getElementById("filtroCategoria")
+    .addEventListener("change", renderizar);
+
+document.getElementById("buscarProducto")
+    .addEventListener("input", renderizar);
+
+</script>
+
+</body>
+</html>
+
