@@ -3,1165 +3,460 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VENTHA Micheladas | Grupo RDM</title>
-
 <style>
-:root {
-    --gold: #d4af37;
-    --black: #101010;
-    --panel: #1c1c1c;
-    --text: #f5f5f5;
-    --muted: #bdbdbd;
-    --red: #ff7777;
-    --green: #81c784;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    background: var(--black);
-    color: var(--text);
-    font-family: Arial, sans-serif;
-}
-
-header {
-    background: #080808;
-    padding: 22px 12px;
-    text-align: center;
-    border-bottom: 2px solid var(--gold);
-}
-
-.logo {
-    color: var(--gold);
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.subtitle {
-    color: var(--muted);
-    margin-top: 7px;
-    font-size: 13px;
-}
-
-main {
-    width: 94%;
-    max-width: 1100px;
-    margin: 24px auto;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.section {
-    background: var(--panel);
-    width: 100%;
-    margin: 18px auto;
-    border: 1px solid #66562b;
-    border-radius: 12px;
-    padding: 20px;
-}
-
-h2 {
-    color: var(--gold);
-    font-size: 20px;
-    margin-top: 0;
-}
-
-input, select, button {
-    padding: 11px;
-    margin: 5px 0;
-    border-radius: 7px;
-    font: inherit;
-}
-
-input, select {
-    width: 100%;
-    min-width: 0;
-    color: white;
-    background: #292929;
-    border: 1px solid #555;
-}
-
-button {
-    background: var(--gold);
-    color: #111;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button:hover {
-    filter: brightness(1.12);
-}
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-secondary {
-    background: #454545;
-    color: white;
-}
-
-.btn-danger {
-    background: #852b2b;
-    color: white;
-}
-
-.btn-small {
-    padding: 7px 9px;
-    font-size: 12px;
-    margin: 2px;
-}
-
-label {
-    display: block;
-    text-align: left;
-    font-size: 13px;
-    color: #ddd;
-    margin-bottom: 9px;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.full {
-    grid-column: 1 / -1;
-}
-
-#loginBox {
-    max-width: 430px;
-    margin: 65px auto;
-    text-align: center;
-}
-
-#loginBox h2 {
-    border-bottom: 1px solid var(--gold);
-    padding-bottom: 12px;
-}
-
-#loginBox button {
-    width: 100%;
-}
-
-#loginError, #mensaje {
-    margin-top: 12px;
-    font-size: 14px;
-}
-
-#loginError {
-    color: var(--red);
-}
-
-#mensaje {
-    font-weight: bold;
-}
-
-.userbar, .section-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.userbar button, .section-heading button {
-    margin: 0;
-}
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-    margin: 18px 0;
-}
-
-.stat {
-    background: var(--panel);
-    border: 1px solid #66562b;
-    border-radius: 10px;
-    padding: 15px 8px;
-    text-align: center;
-}
-
-.stat span {
-    display: block;
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.stat strong {
-    display: block;
-    color: var(--gold);
-    font-size: 25px;
-    margin-top: 7px;
-}
-
-.table-wrap {
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 14px;
-    font-size: 14px;
-}
-
-th, td {
-    border-bottom: 1px solid #444;
-    padding: 11px 8px;
-    text-align: left;
-}
-
-th {
-    color: var(--gold);
-    background: #111;
-}
-
-.low-stock {
-    color: var(--red);
-    font-weight: bold;
-}
-
-.good-stock {
-    color: var(--green);
-}
-
-.note {
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 1.5;
-}
-
-.empty {
-    text-align: center;
-    color: var(--muted);
-    padding: 22px;
-}
-
-footer {
-    color: #777;
-    text-align: center;
-    font-size: 12px;
-    padding: 22px;
-}
-
-@media (max-width: 650px) {
-    .logo {
-        font-size: 23px;
-    }
-
-    .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .full {
-        grid-column: auto;
-    }
-
-    .section {
-        padding: 14px;
-    }
-
-    table {
-        font-size: 12px;
-    }
-
-    th, td {
-        padding: 9px 6px;
-    }
-}
+:root{--gold:#d4af37;--bg:#101010;--panel:#1c1c1c;--text:#f5f5f5;--muted:#bbb;--red:#ff7777;--green:#81c784}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{background:#080808;text-align:center;padding:22px;border-bottom:2px solid var(--gold)}
+.logo{font-size:27px;font-weight:bold;letter-spacing:2px;color:var(--gold)}
+.subtitle{color:var(--muted);font-size:13px;margin-top:7px}
+main{width:94%;max-width:1200px;margin:22px auto}
+.section{background:var(--panel);border:1px solid #66562b;border-radius:12px;padding:18px;margin:16px 0}
+.hidden{display:none!important}
+h2,h3{color:var(--gold);margin-top:0}
+label{display:block;font-size:13px;color:#ddd;margin-bottom:8px}
+input,select,textarea,button{font:inherit;padding:11px;border-radius:7px;margin:4px 0}
+input,select,textarea{width:100%;background:#292929;color:white;border:1px solid #555;min-width:0}
+textarea{min-height:70px}
+button{background:var(--gold);color:#111;border:0;font-weight:bold;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.btn-secondary{background:#454545;color:white}
+.btn-danger{background:#852b2b;color:white}
+.btn-small{padding:7px;font-size:12px;margin:2px}
+.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.full{grid-column:1/-1}
+#loginBox{max-width:430px;margin:60px auto;text-align:center}
+#loginBox button{width:100%}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:15px 0}
+.stat{background:var(--panel);border:1px solid #66562b;border-radius:10px;text-align:center;padding:14px 5px}
+.stat span{display:block;color:var(--muted);font-size:12px}
+.stat strong{display:block;color:var(--gold);font-size:24px;margin-top:7px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{flex:1;min-width:120px}
+.tabs button.active{outline:2px solid white}
+.userbar,.heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+th,td{padding:9px 7px;text-align:left;border-bottom:1px solid #444;vertical-align:top}
+th{color:var(--gold);background:#111;white-space:nowrap}
+.low{color:var(--red);font-weight:bold}
+.good{color:var(--green)}
+.note{font-size:12px;color:var(--muted);line-height:1.5}
+.message{min-height:18px;margin:8px 0;font-weight:bold}
+.error{color:var(--red)}
+.empty{text-align:center;color:var(--muted);padding:20px}
+footer{text-align:center;color:#777;padding:20px;font-size:12px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.section{padding:13px}.logo{font-size:22px}table{font-size:12px}}
 </style>
 </head>
-
 <body>
-
 <header>
-    <div class="logo">VENTHA MICHELADAS</div>
-    <div class="subtitle">GRUPO RDM · CONTROL DE INVENTARIO</div>
+ <div class="logo">VENTHA MICHELADAS</div>
+ <div class="subtitle">GRUPO RDM · CONTROL OPERATIVO E INVENTARIO</div>
 </header>
-
 <main>
-
-<!-- INICIO DE SESIÓN -->
 <section id="loginBox" class="section">
-    <h2>Iniciar sesión</h2>
-
-    <p class="note">
-        Acceso al módulo administrativo.
-    </p>
-
-    <form id="loginForm">
-        <label>
-            Usuario
-            <input id="usuarioInput"
-                   autocomplete="username"
-                   placeholder="Usuario"
-                   required>
-        </label>
-
-        <label>
-            Contraseña
-            <input id="claveInput"
-                   type="password"
-                   autocomplete="current-password"
-                   placeholder="Contraseña"
-                   required>
-        </label>
-
-        <button type="submit">Ingresar</button>
-    </form>
-
-    <div id="loginError" role="alert"></div>
+ <h2>Iniciar sesión</h2>
+ <p class="note">Acceso provisional para pruebas.</p>
+ <form id="loginForm">
+  <label>Usuario<input id="usuario" autocomplete="username" required></label>
+  <label>Contraseña<input id="clave" type="password" autocomplete="current-password" required></label>
+  <button>Ingresar</button>
+ </form>
+ <div id="loginError" class="message error"></div>
+ <p class="note">Prueba: usuario <b>admin</b> · contraseña <b>RDM2026!</b></p>
 </section>
 
-<!-- APLICACIÓN -->
-<div id="sistema" class="hidden">
+<div id="app" class="hidden">
+ <section class="section">
+  <div class="userbar">
+   <div>Usuario activo: <b id="usuarioActivo"></b></div>
+   <button class="btn-secondary" onclick="logout()">Cerrar sesión</button>
+  </div>
+  <div id="mensaje" class="message" role="status"></div>
+  <p class="note">Crea tus categorías, productos, presentaciones y unidades. Registra las entradas, salidas, mermas y ajustes para mantener el inventario actualizado.</p>
+  <p class="note error"><b>Importante:</b> esta versión guarda datos en este navegador. No sincroniza con otros dispositivos y el acceso de prueba no es seguro para producción. No la uses todavía como sistema definitivo del negocio.</p>
+ </section>
 
-    <section class="section">
-        <div class="userbar">
-            <div>
-                Usuario activo:
-                <strong id="usuarioActivo"></strong>
-            </div>
+ <div class="stats">
+  <div class="stat"><span>Productos</span><strong id="statProductos">0</strong></div>
+  <div class="stat"><span>Productos con stock bajo</span><strong id="statBajos">0</strong></div>
+  <div class="stat"><span>Unidades en inventario</span><strong id="statStock">0</strong></div>
+  <div class="stat"><span>Movimientos</span><strong id="statMovs">0</strong></div>
+ </div>
 
-            <button class="btn-secondary"
-                    type="button"
-                    onclick="cerrarSesion()">
-                Cerrar sesión
-            </button>
-        </div>
+ <div class="tabs">
+  <button class="active" data-tab="panelInventario">Inventario</button>
+  <button data-tab="panelCatalogos">Categorías y unidades</button>
+  <button data-tab="panelMovimientos">Entradas y salidas</button>
+  <button data-tab="panelRespaldo">Respaldos</button>
+ </div>
 
-        <div id="mensaje" role="status" aria-live="polite"></div>
+ <section id="panelInventario" class="section">
+  <h2>Registrar producto</h2>
+  <form id="formProducto" class="form-grid">
+   <label>Categoría<select id="pCategoria" required></select></label>
+   <label>Nombre del producto<input id="pNombre" maxlength="80" placeholder="Ej. Tequila, Clamato" required></label>
+   <label>Marca<input id="pMarca" maxlength="60" placeholder="Ej. José Cuervo"></label>
+   <label>Presentación<input id="pPresentacion" maxlength="60" placeholder="Ej. botella 750 ml, refresco 3 L"></label>
+   <label>Unidad de inventario<select id="pUnidad" required></select></label>
+   <label>Existencia inicial<input id="pStock" type="number" min="0" step="0.001" value="0" required></label>
+   <label>Unidades por paquete<input id="pFactor" type="number" min="1" step="1" value="12" required></label>
+   <label>Nombre del paquete<input id="pPaquete" value="caja" maxlength="30" placeholder="caja, cartón, paquete"></label>
+   <label>Existencia mínima para alerta<input id="pMinimo" type="number" min="0" step="0.001" value="5" required></label>
+   <label>Costo por unidad (MXN)<input id="pCosto" type="number" min="0" step="0.01" placeholder="Opcional"></label>
+   <label>Proveedor habitual<input id="pProveedor" maxlength="80" placeholder="Opcional"></label>
+   <label>Clave interna / SKU<input id="pSku" maxlength="40" placeholder="Opcional"></label>
+   <button class="full">Guardar producto</button>
+  </form>
 
-        <p class="note">
-            Esta versión controla productos y existencias.
-            Las ventas y los tickets se incorporarán posteriormente.
-        </p>
-    </section>
+  <hr style="border-color:#444;margin:22px 0">
+  <h2>Inventario actual</h2>
+  <div class="form-grid">
+   <label>Filtrar categoría<select id="filtroCategoria"><option value="todos">Todas las categorías</option></select></label>
+   <label class="full">Buscar producto<input id="buscarProducto" placeholder="Nombre, marca, presentación o clave"></label>
+  </div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>Categoría</th><th>Producto</th><th>Existencia</th><th>Mínimo</th><th>Acciones</th></tr></thead>
+   <tbody id="tablaInventario"></tbody>
+  </table></div>
+ </section>
 
-    <!-- RESUMEN -->
-    <div class="stats">
-        <div class="stat">
-            <span>Productos registrados</span>
-            <strong id="totalProductos">0</strong>
-        </div>
+ <section id="panelCatalogos" class="section hidden">
+  <h2>Administrar categorías</h2>
+  <form id="formCategoria" class="form-grid">
+   <label class="full">Nombre de la categoría<input id="cNombre" maxlength="50" placeholder="Ej. Destilados, Refrescos, Clamatos" required></label>
+   <button class="full">＋ Crear categoría</button>
+  </form>
+  <div class="table-wrap"><table><thead><tr><th>Categoría</th><th>Productos</th><th>Acciones</th></tr></thead><tbody id="tablaCategorias"></tbody></table></div>
 
-        <div class="stat">
-            <span>Cervezas mega</span>
-            <strong id="totalMega">0</strong>
-        </div>
+  <hr style="border-color:#444;margin:22px 0">
+  <h2>Administrar unidades</h2>
+  <p class="note">Ejemplos: botella, lata, pieza, vaso, litro, kilogramo. Mantén una unidad de inventario coherente por producto.</p>
+  <form id="formUnidad" class="form-grid">
+   <label class="full">Nombre de la unidad<input id="uNombre" maxlength="30" placeholder="Ej. botella, litro, pieza" required></label>
+   <button class="full">＋ Crear unidad</button>
+  </form>
+  <div id="listaUnidades"></div>
+ </section>
 
-        <div class="stat">
-            <span>Cervezas medias</span>
-            <strong id="totalMedias">0</strong>
-        </div>
+ <section id="panelMovimientos" class="section hidden">
+  <h2>Registrar entrada o salida</h2>
+  <form id="formMovimiento" class="form-grid">
+   <label>Producto<select id="mProducto" required></select></label>
+   <label>Tipo de movimiento<select id="mTipo">
+    <option value="entrada">Entrada / compra recibida</option>
+    <option value="salida">Salida / consumo</option>
+    <option value="merma">Merma / rotura</option>
+    <option value="ajuste">Ajuste por conteo físico</option>
+   </select></label>
+   <label>Motivo<input id="mMotivo" maxlength="160" placeholder="Ej. compra, consumo, botella rota" required></label>
+   <label>Cantidad<input id="mCantidad" type="number" min="0.001" step="0.001" required></label>
+   <label>¿La cantidad está en paquetes?<select id="mPaquete"><option value="no">No, en unidad de inventario</option><option value="si">Sí, en paquete de compra</option></select></label>
+   <label>Proveedor o referencia<input id="mReferencia" maxlength="100" placeholder="Opcional"></label>
+   <label class="full">Nota adicional<textarea id="mNota" maxlength="300" placeholder="Detalle de la operación (opcional)"></textarea></label>
+   <button class="full">Registrar movimiento</button>
+  </form>
+  <p class="note">Si eliges paquete, la cantidad se multiplica por las unidades por paquete que configuraste en el producto. Para ajustes físicos, escribe la cantidad final que contaste.</p>
 
-        <div class="stat">
-            <span>Vasos disponibles</span>
-            <strong id="totalVasos">0</strong>
-        </div>
-    </div>
+  <hr style="border-color:#444;margin:22px 0">
+  <h2>Historial de movimientos</h2>
+  <div class="form-grid">
+   <label>Filtrar tipo<select id="filtroMovimiento"><option value="todos">Todos</option><option value="entrada">Entradas</option><option value="salida">Salidas</option><option value="merma">Mermas</option><option value="ajuste">Ajustes</option><option value="alta">Altas</option><option value="baja">Bajas</option></select></label>
+   <label class="full">Buscar en el historial<input id="buscarMovimiento" placeholder="Producto, motivo, proveedor"></label>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Antes → Después</th><th>Motivo / referencia</th></tr></thead><tbody id="tablaMovimientos"></tbody></table></div>
+ </section>
 
-    <!-- AGREGAR PRODUCTO -->
-    <section class="section">
-        <h2>＋ Agregar producto</h2>
-
-        <form id="formProducto" class="form-grid">
-
-            <label>
-                Categoría
-                <select id="categoriaNueva" required>
-                    <option value="mega">Cerveza mega</option>
-                    <option value="media">Cerveza media</option>
-                    <option value="refresco">Refresco</option>
-                    <option value="vaso">Vasos</option>
-                </select>
-            </label>
-
-            <label>
-                Marca o nombre
-                <input id="nombreNuevo"
-                       placeholder="Ej. Corona, Coca-Cola"
-                       maxlength="60"
-                       required>
-            </label>
-
-            <label>
-                Presentación
-                <input id="presentacionNueva"
-                       placeholder="Ej. 1.2 L, 600 ml, vaso 1 L"
-                       maxlength="40">
-            </label>
-
-            <label>
-                Unidad de conteo
-                <select id="unidadNueva" required>
-                    <option value="botellas">Botellas</option>
-                    <option value="latas">Latas</option>
-                    <option value="piezas">Piezas</option>
-                    <option value="vasos">Vasos</option>
-                </select>
-            </label>
-
-            <label class="full">
-                Existencia inicial
-                <input id="cantidadNueva"
-                       type="number"
-                       min="0"
-                       step="1"
-                       value="0"
-                       required>
-            </label>
-
-            <button class="full" type="submit">
-                Agregar al inventario
-            </button>
-        </form>
-    </section>
-
-    <!-- REABASTECER -->
-    <section class="section">
-        <h2>＋ Reabastecer inventario</h2>
-
-        <form id="formReabastecer" class="form-grid">
-
-            <label class="full">
-                Seleccionar producto
-                <select id="productoReabastecer" required>
-                    <option value="">Selecciona un producto</option>
-                </select>
-            </label>
-
-            <label>
-                Cantidad recibida
-                <input id="cantidadReabastecer"
-                       type="number"
-                       min="1"
-                       step="1"
-                       placeholder="Ej. 12"
-                       required>
-            </label>
-
-            <div>
-                <label>Registrar entrada</label>
-                <button type="submit" style="width:100%">
-                    Reabastecer
-                </button>
-            </div>
-        </form>
-
-        <p class="note">
-            Registra las unidades individuales que recibes.
-            Por ejemplo, un cartón de 12 botellas equivale a 12
-            botellas si tu inventario se cuenta por botella.
-        </p>
-    </section>
-
-    <!-- INVENTARIO -->
-    <section class="section">
-        <div class="section-heading">
-            <h2>Inventario actual</h2>
-
-            <button type="button"
-                    class="btn-secondary"
-                    onclick="renderizar()">
-                Actualizar
-            </button>
-        </div>
-
-        <label>
-            Filtrar por categoría
-            <select id="filtroCategoria">
-                <option value="todos">Todas las categorías</option>
-                <option value="mega">Cervezas mega</option>
-                <option value="media">Cervezas medias</option>
-                <option value="refresco">Refrescos</option>
-                <option value="vaso">Vasos</option>
-            </select>
-        </label>
-
-        <label>
-            Buscar producto
-            <input id="buscarProducto"
-                   placeholder="Escribe una marca o presentación">
-        </label>
-
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Categoría</th>
-                        <th>Producto</th>
-                        <th>Existencias</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-
-                <tbody id="tablaInventario"></tbody>
-            </table>
-        </div>
-
-        <p class="note">
-            Las existencias en rojo indican cinco unidades o menos.
-            Este umbral es provisional.
-        </p>
-    </section>
-
-    <!-- AJUSTAR CONTEO -->
-    <section class="section">
-        <h2>Corregir conteo físico</h2>
-
-        <p class="note">
-            Usa esta función cuando cuentes físicamente los productos.
-            La nueva cantidad sustituye a la existencia anterior.
-        </p>
-
-        <form id="formCorreccion" class="form-grid">
-            <label class="full">
-                Producto
-                <select id="productoCorreccion" required>
-                    <option value="">Selecciona un producto</option>
-                </select>
-            </label>
-
-            <label class="full">
-                Cantidad contada
-                <input id="cantidadCorreccion"
-                       type="number"
-                       min="0"
-                       step="1"
-                       required>
-            </label>
-
-            <button class="full" type="submit">
-                Guardar conteo físico
-            </button>
-        </form>
-    </section>
-
-    <!-- RESPALDO -->
-    <section class="section">
-        <h2>Respaldo de datos</h2>
-
-        <p class="note">
-            Descarga una copia del inventario actual para guardarla
-            fuera del navegador.
-        </p>
-
-        <button type="button" onclick="exportarRespaldo()">
-            Exportar inventario
-        </button>
-    </section>
-
+ <section id="panelRespaldo" class="section hidden">
+  <h2>Respaldar o restaurar datos</h2>
+  <p class="note">Exporta periódicamente tus datos. El archivo incluye categorías, unidades, productos y movimientos.</p>
+  <button onclick="exportarRespaldo()">Exportar respaldo JSON</button>
+  <hr style="border-color:#444;margin:22px 0">
+  <label>Seleccionar archivo de respaldo<input id="archivoImportar" type="file" accept=".json,application/json"></label>
+  <button onclick="importarRespaldo()">Importar respaldo</button>
+  <p class="note error">Importar un respaldo reemplaza los datos actuales. Exporta primero una copia para evitar pérdidas.</p>
+ </section>
 </div>
 </main>
-
-<footer>
-    VENTHA · GRUPO RDM · Versión administrativa 1.0
-</footer>
+<footer>VENTHA · GRUPO RDM · Prototipo administrativo 2.0</footer>
 
 <script>
 "use strict";
 
-// ==========================================
-// CONFIGURACIÓN PROVISIONAL DE DESARROLLO
-// No utilizar como autenticación de producción.
-// ==========================================
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "RDM2026!";
+const STORAGE_KEY = "venthaRDM_v2";
+const $ = id => document.getElementById(id);
 
-const USUARIO_ADMIN = "admin";
-const CLAVE_ADMIN = "RDM2026!";
+let sesion = false;
+let categorias = [
+ {id:"cat-mega",nombre:"Cerveza mega"},
+ {id:"cat-media",nombre:"Cerveza media"},
+ {id:"cat-refrescos",nombre:"Refrescos"},
+ {id:"cat-destilados",nombre:"Destilados"},
+ {id:"cat-clamatos",nombre:"Clamatos"},
+ {id:"cat-desechables",nombre:"Desechables"},
+ {id:"cat-insumos",nombre:"Insumos"}
+];
+let unidades = ["botella","lata","pieza","vaso","litro","mililitro","kilogramo","gramo","paquete"];
+let productos = [];
+let movimientos = [];
 
-const CLAVE_INVENTARIO = "venthaMicheladasInventarioV1";
+function uid(){return "id-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9)}
+function msg(text,error=false){$("mensaje").textContent=text;$("mensaje").style.color=error?"#ff7777":"#81c784"}
+function requireLogin(){if(!sesion)throw Error("Inicia sesión para continuar.")}
+function categoryName(id){return categorias.find(c=>c.id===id)?.nombre||"Categoría eliminada"}
+function productLabel(p){return [p.nombre,p.marca,p.presentacion].filter(Boolean).join(" · ")}
+function saveAll(){
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify({categorias,unidades,productos,movimientos}));return true}
+ catch(e){msg("No se pudieron guardar los datos. Exporta un respaldo.",true);return false}
+}
+function loadAll(){
+ try{
+  const d=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
+  if(d&&Array.isArray(d.categorias)&&Array.isArray(d.unidades)&&Array.isArray(d.productos)&&Array.isArray(d.movimientos)){
+   categorias=d.categorias;unidades=d.unidades;productos=d.productos;movimientos=d.movimientos;return;
+  }
+  // Intentar recuperar el inventario de la versión anterior.
+  const old=JSON.parse(localStorage.getItem("venthaMicheladasInventarioV1")||"null");
+  if(Array.isArray(old)&&old.length){
+   const map={mega:"cat-mega",media:"cat-media",refresco:"cat-refrescos",vaso:"cat-desechables"};
+   productos=old.map(p=>({id:p.id||uid(),categoria:map[p.categoria]||"cat-insumos",nombre:p.nombre||"Producto migrado",marca:"",presentacion:p.presentacion||"",unidad:unidades.includes(p.unidad)?p.unidad:({botellas:"botella",latas:"lata",vasos:"vaso"}[p.unidad]||"pieza"),stock:Number(p.stock)||0,factor:12,paquete:"caja",minimo:5,costo:null,proveedor:"",sku:""}));
+   movimientos.push({id:uid(),fecha:new Date().toISOString(),producto:"Migración de versión anterior",tipo:"alta",cantidad:productos.length,unidad:"productos",antes:0,despues:productos.length,motivo:"Migración local",referencia:"",nota:"",usuario:ADMIN_USER});
+   saveAll();
+  }
+ }catch(e){console.warn("No se pudieron cargar datos",e)}
+}
+loadAll();
 
-const categorias = {
-    mega: "Cerveza mega",
-    media: "Cerveza media",
-    refresco: "Refresco",
-    vaso: "Vasos"
-};
+$("loginForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if($("usuario").value.trim()===ADMIN_USER&&$("clave").value===ADMIN_PASS){
+  sesion=true;$("loginBox").classList.add("hidden");$("app").classList.remove("hidden");$("usuarioActivo").textContent=ADMIN_USER;$("loginError").textContent="";renderAll();msg("Sesión iniciada.");
+ }else $("loginError").textContent="Usuario o contraseña incorrectos.";
+});
+function logout(){sesion=false;$("app").classList.add("hidden");$("loginBox").classList.remove("hidden");$("loginForm").reset()}
 
-let inventario = cargarInventario();
-let sesionActiva = false;
-let mensajeTimer;
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{
+ document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");
+ document.querySelectorAll(".section[id^='panel']").forEach(p=>p.classList.add("hidden"));
+ $(b.dataset.tab).classList.remove("hidden");
+}));
 
-// ==========================================
-// ALMACENAMIENTO
-// ==========================================
+function fillSelect(id,items,placeholder){
+ const s=$(id),old=s.value;s.replaceChildren();
+ if(placeholder){const o=document.createElement("option");o.value="";o.textContent=placeholder;s.append(o)}
+ items.forEach(x=>{const o=document.createElement("option");o.value=x.id??x;o.textContent=x.nombre??x;s.append(o)});
+ if([...s.options].some(o=>o.value===old))s.value=old;
+}
+function renderSelectors(){
+ fillSelect("pCategoria",categorias,"Selecciona categoría");
+ fillSelect("pUnidad",unidades,"Selecciona unidad");
+ fillSelect("mProducto",productos.map(p=>({id:p.id,nombre:categoryName(p.categoria)+" · "+productLabel(p)+" ("+p.stock+" "+p.unidad+")"})),"Selecciona producto");
+ const f=$("filtroCategoria"),old=f.value;f.replaceChildren();
+ const all=document.createElement("option");all.value="todos";all.textContent="Todas las categorías";f.append(all);
+ categorias.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.nombre;f.append(o)});
+ if([...f.options].some(o=>o.value===old))f.value=old;
+}
+function recordMovement(p,tipo,cantidad,antes,despues,motivo,referencia="",nota=""){
+ movimientos.unshift({id:uid(),fecha:new Date().toISOString(),producto:productLabel(p),productoId:p.id,tipo,cantidad,unidad:p.unidad,antes,despues,motivo,referencia,nota,usuario:ADMIN_USER});
+}
+$("formProducto").addEventListener("submit",e=>{
+ e.preventDefault();
+ try{
+  requireLogin();
+  const p={
+   id:uid(),categoria:$("pCategoria").value,nombre:$("pNombre").value.trim(),
+   marca:$("pMarca").value.trim(),presentacion:$("pPresentacion").value.trim(),
+   unidad:$("pUnidad").value,stock:Number($("pStock").value),
+   factor:Number($("pFactor").value),paquete:$("pPaquete").value.trim()||"paquete",
+   minimo:Number($("pMinimo").value),costo:$("pCosto").value===""?null:Number($("pCosto").value),
+   proveedor:$("pProveedor").value.trim(),sku:$("pSku").value.trim()
+  };
+  if(!p.categoria||!p.unidad||!p.nombre)throw Error("Completa el nombre, categoría y unidad.");
+  if(!Number.isFinite(p.stock)||p.stock<0||!Number.isFinite(p.minimo)||p.minimo<0)throw Error("Revisa las cantidades.");
+  if(!Number.isInteger(p.factor)||p.factor<1)throw Error("Las unidades por paquete deben ser un entero positivo.");
+  if(productos.some(x=>x.nombre.toLowerCase()===p.nombre.toLowerCase()&&x.categoria===p.categoria&&x.presentacion.toLowerCase()===p.presentacion.toLowerCase()))throw Error("Ya existe un producto con esa categoría, nombre y presentación.");
+  productos.push(p);
+  recordMovement(p,"alta",p.stock,0,p.stock,"Alta de producto");
+  if(!saveAll()){productos.pop();movimientos.shift();return}
+  e.target.reset();$("pStock").value=0;$("pFactor").value=12;$("pPaquete").value="caja";$("pMinimo").value=5;
+  renderAll();msg("Producto creado correctamente.");
+ }catch(err){msg(err.message,true)}
+});
 
-function cargarInventario() {
-    try {
-        const datos = localStorage.getItem(CLAVE_INVENTARIO);
-
-        if (!datos) return [];
-
-        const productos = JSON.parse(datos);
-
-        if (!Array.isArray(productos)) return [];
-
-        return productos.filter(p =>
-            p &&
-            typeof p.id === "string" &&
-            typeof p.nombre === "string" &&
-            Object.hasOwn(categorias, p.categoria) &&
-            Number.isSafeInteger(p.stock) &&
-            p.stock >= 0
-        );
-    } catch (error) {
-        console.error("Error al cargar el inventario:", error);
-        return [];
-    }
+$("formCategoria").addEventListener("submit",e=>{
+ e.preventDefault();try{
+  requireLogin();const nombre=$("cNombre").value.trim();
+  if(!nombre)throw Error("Escribe el nombre de la categoría.");
+  if(categorias.some(c=>c.nombre.toLowerCase()===nombre.toLowerCase()))throw Error("Esa categoría ya existe.");
+  categorias.push({id:uid(),nombre});
+  if(!saveAll())return;e.target.reset();renderAll();msg("Categoría creada.");
+ }catch(err){msg(err.message,true)}
+});
+function renameCategory(id){
+ const c=categorias.find(x=>x.id===id);if(!c)return;
+ const name=prompt("Nuevo nombre de categoría:",c.nombre);if(name===null)return;
+ if(!name.trim()){msg("El nombre no puede quedar vacío.",true);return}
+ if(categorias.some(x=>x.id!==id&&x.nombre.toLowerCase()===name.trim().toLowerCase())){msg("Ya existe una categoría con ese nombre.",true);return}
+ const old=c.nombre;c.nombre=name.trim();if(!saveAll()){c.nombre=old;return}renderAll();msg("Categoría renombrada.");
+}
+function deleteCategory(id){
+ if(productos.some(p=>p.categoria===id)){msg("Primero cambia de categoría o da de baja sus productos.",true);return}
+ const c=categorias.find(x=>x.id===id);if(!c)return;
+ if(!confirm("¿Eliminar la categoría "+c.nombre+"?"))return;
+ categorias=categorias.filter(x=>x.id!==id);saveAll();renderAll();msg("Categoría eliminada.");
+}
+$("formUnidad").addEventListener("submit",e=>{
+ e.preventDefault();const u=$("uNombre").value.trim();
+ if(!u){msg("Escribe una unidad.",true);return}
+ if(unidades.some(x=>x.toLowerCase()===u.toLowerCase())){msg("Esa unidad ya existe.",true);return}
+ unidades.push(u);if(!saveAll())return;e.target.reset();renderAll();msg("Unidad creada.");
+});
+function deleteUnit(u){
+ if(productos.some(p=>p.unidad===u)){msg("No puedes eliminar una unidad que está asignada a productos.",true);return}
+ if(!confirm("¿Eliminar la unidad "+u+"?"))return;
+ unidades=unidades.filter(x=>x!==u);saveAll();renderAll();msg("Unidad eliminada.");
 }
 
-function guardarInventario() {
-    try {
-        localStorage.setItem(
-            CLAVE_INVENTARIO,
-            JSON.stringify(inventario)
-        );
-
-        return true;
-    } catch (error) {
-        console.error(error);
-
-        mostrarMensaje(
-            "No se pudieron guardar los datos. Exporta un respaldo.",
-            true
-        );
-
-        return false;
-    }
+function editProduct(id){
+ const p=productos.find(x=>x.id===id);if(!p)return;
+ const nombre=prompt("Nombre del producto:",p.nombre);if(nombre===null)return;
+ if(!nombre.trim()){msg("El nombre no puede quedar vacío.",true);return}
+ const marca=prompt("Marca:",p.marca);if(marca===null)return;
+ const presentacion=prompt("Presentación:",p.presentacion);if(presentacion===null)return;
+ const catList=categorias.map((c,i)=>(i+1)+". "+c.nombre).join("\n");
+ const cat=prompt("Número de categoría:\n"+catList,String(categorias.findIndex(c=>c.id===p.categoria)+1));if(cat===null)return;
+ const c=categorias[Number(cat)-1];if(!c){msg("Categoría no válida.",true);return}
+ const unidad=prompt("Unidad de inventario (debe existir en el catálogo):\n"+unidades.join(", "),p.unidad);if(unidad===null)return;
+ const u=unidades.find(x=>x.toLowerCase()===unidad.trim().toLowerCase());if(!u){msg("Esa unidad no existe. Créala primero en Categorías y unidades.",true);return}
+ const factor=prompt("Unidades contenidas en una "+p.paquete+":",String(p.factor));if(factor===null)return;
+ if(!Number.isInteger(Number(factor))||Number(factor)<1){msg("El factor debe ser un entero positivo.",true);return}
+ const minimo=prompt("Existencia mínima para alerta:",String(p.minimo));if(minimo===null)return;
+ if(!Number.isFinite(Number(minimo))||Number(minimo)<0){msg("Mínimo no válido.",true);return}
+ const before={...p};
+ p.nombre=nombre.trim();p.marca=marca.trim();p.presentacion=presentacion.trim();p.categoria=c.id;p.unidad=u;p.factor=Number(factor);p.minimo=Number(minimo);
+ if(!saveAll()){Object.assign(p,before);return}renderAll();msg("Producto actualizado.");
+}
+function quickCount(id){
+ const p=productos.find(x=>x.id===id);if(!p)return;
+ const q=prompt("Cantidad física contada para "+productLabel(p)+" (actual: "+p.stock+" "+p.unidad+"):",String(p.stock));if(q===null)return;
+ const n=Number(q);if(!Number.isFinite(n)||n<0){msg("Cantidad no válida.",true);return}
+ const motivo=prompt("Motivo del ajuste:","Conteo físico");if(!motivo||!motivo.trim())return;
+ const old=p.stock;p.stock=n;recordMovement(p,"ajuste",n-old,old,n,motivo.trim());
+ if(!saveAll()){p.stock=old;movimientos.shift();return}renderAll();msg("Conteo físico guardado.");
+}
+function deleteProduct(id){
+ const i=productos.findIndex(p=>p.id===id);if(i<0)return;const p=productos[i];
+ if(!confirm("¿Dar de baja "+productLabel(p)+" del catálogo? No se registrará una salida física."))return;
+ recordMovement(p,"baja",p.stock,p.stock,0,"Baja del catálogo");
+ productos.splice(i,1);if(!saveAll())return;renderAll();msg("Producto dado de baja.");
+}
+function quickEntry(id){
+ $("mProducto").value=id;$("mTipo").value="entrada";$("mMotivo").value="Entrada de mercancía";
+ document.querySelector('[data-tab="panelMovimientos"]').click();$("mCantidad").focus();
 }
 
-// ==========================================
-// INICIO DE SESIÓN
-// ==========================================
+$("formMovimiento").addEventListener("submit",e=>{
+ e.preventDefault();
+ try{
+  requireLogin();
+  const p=productos.find(x=>x.id===$("mProducto").value);if(!p)throw Error("Selecciona un producto.");
+  const tipo=$("mTipo").value,q=Number($("mCantidad").value);
+  if(!Number.isFinite(q)||q<=0)throw Error("La cantidad debe ser mayor que cero.");
+  const cantidad=$("mPaquete").value==="si"?q*p.factor:q;
+  const motivo=$("mMotivo").value.trim();if(!motivo)throw Error("Escribe el motivo.");
+  const antes=p.stock;let despues=antes;
+  if(tipo==="entrada")despues+=cantidad;
+  else if(tipo==="salida"||tipo==="merma")despues-=cantidad;
+  else if(tipo==="ajuste")despues=cantidad;
+  if(despues<0)throw Error("No hay suficiente existencia. Disponible: "+antes+" "+p.unidad+".");
+  if(!Number.isFinite(despues))throw Error("La cantidad está fuera de rango.");
+  if(tipo==="ajuste"&&!confirm("El conteo dejará "+productLabel(p)+" en "+cantidad+" "+p.unidad+". ¿Continuar?"))return;
+  p.stock=despues;
+  recordMovement(p,tipo,tipo==="ajuste"?despues-antes:cantidad,antes,despues,motivo,$("mReferencia").value.trim(),$("mNota").value.trim());
+  if(!saveAll()){p.stock=antes;movimientos.shift();return}
+  e.target.reset();renderAll();msg("Movimiento registrado. Existencia actual: "+p.stock+" "+p.unidad+".");
+ }catch(err){msg(err.message,true)}
+});
 
-document.getElementById("loginForm")
-    .addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const usuario = document.getElementById("usuarioInput")
-            .value.trim();
-
-        const clave = document.getElementById("claveInput").value;
-
-        if (
-            usuario === USUARIO_ADMIN &&
-            clave === CLAVE_ADMIN
-        ) {
-            sesionActiva = true;
-
-            document.getElementById("loginBox")
-                .classList.add("hidden");
-
-            document.getElementById("sistema")
-                .classList.remove("hidden");
-
-            document.getElementById("usuarioActivo")
-                .textContent = usuario;
-
-            document.getElementById("loginError")
-                .textContent = "";
-
-            renderizar();
-        } else {
-            document.getElementById("loginError")
-                .textContent = "Usuario o contraseña incorrectos.";
-        }
-    });
-
-function cerrarSesion() {
-    sesionActiva = false;
-
-    document.getElementById("sistema").classList.add("hidden");
-    document.getElementById("loginBox").classList.remove("hidden");
-    document.getElementById("loginForm").reset();
-    document.getElementById("usuarioActivo").textContent = "";
+function cell(tr,text){const td=tr.insertCell();td.textContent=String(text??"");return td}
+function makeButton(text,cls,fn){const b=document.createElement("button");b.type="button";b.textContent=text;b.className=cls;b.addEventListener("click",fn);return b}
+function renderInventory(){
+ const tb=$("tablaInventario");tb.replaceChildren();
+ const filter=$("filtroCategoria").value,search=$("buscarProducto").value.trim().toLowerCase();
+ const rows=productos.filter(p=>(filter==="todos"||p.categoria===filter)&&[p.nombre,p.marca,p.presentacion,p.sku,p.unidad].join(" ").toLowerCase().includes(search));
+ if(!rows.length){const tr=tb.insertRow(),td=tr.insertCell();td.colSpan=5;td.className="empty";td.textContent="No hay productos para mostrar."}
+ rows.forEach(p=>{
+  const tr=tb.insertRow();cell(tr,categoryName(p.categoria));
+  cell(tr,productLabel(p)+(p.sku?" · SKU "+p.sku:""));
+  const stock=cell(tr,p.stock+" "+p.unidad);stock.className=p.stock<=p.minimo?"low":"good";
+  cell(tr,p.minimo+" "+p.unidad);
+  const a=tr.insertCell();a.append(makeButton("+ Entrada","btn-small",()=>quickEntry(p.id)),makeButton("Editar","btn-small btn-secondary",()=>editProduct(p.id)),makeButton("Conteo","btn-small btn-secondary",()=>quickCount(p.id)),makeButton("Baja","btn-small btn-danger",()=>deleteProduct(p.id)));
+ });
 }
-
-function exigirSesion() {
-    if (!sesionActiva) {
-        throw new Error("Inicia sesión para continuar.");
-    }
+function renderCategories(){
+ const tb=$("tablaCategorias");tb.replaceChildren();
+ categorias.forEach(c=>{
+  const tr=tb.insertRow();cell(tr,c.nombre);cell(tr,productos.filter(p=>p.categoria===c.id).length);
+  const td=tr.insertCell();td.append(makeButton("Renombrar","btn-small btn-secondary",()=>renameCategory(c.id)),makeButton("Eliminar","btn-small btn-danger",()=>deleteCategory(c.id)));
+ });
+ const list=$("listaUnidades");list.replaceChildren();
+ unidades.forEach(u=>{
+  const row=document.createElement("div");row.style.cssText="display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid #444;padding:8px 0";
+  const name=document.createElement("span");name.textContent=u;row.append(name,makeButton("Eliminar","btn-small btn-danger",()=>deleteUnit(u)));list.append(row);
+ });
 }
-
-// ==========================================
-// MENSAJES
-// ==========================================
-
-function mostrarMensaje(texto, error = false) {
-    const elemento = document.getElementById("mensaje");
-
-    elemento.textContent = texto;
-    elemento.style.color = error ? "#ff7777" : "#81c784";
-
-    clearTimeout(mensajeTimer);
-
-    mensajeTimer = setTimeout(() => {
-        elemento.textContent = "";
-    }, 5000);
+function renderMovements(){
+ const tb=$("tablaMovimientos");tb.replaceChildren();
+ const filter=$("filtroMovimiento").value,search=$("buscarMovimiento").value.trim().toLowerCase();
+ const rows=movimientos.filter(m=>(filter==="todos"||m.tipo===filter)&&[m.producto,m.motivo,m.referencia,m.nota,m.usuario].join(" ").toLowerCase().includes(search));
+ if(!rows.length){const tr=tb.insertRow(),td=tr.insertCell();td.colSpan=6;td.className="empty";td.textContent="No hay movimientos para mostrar."}
+ rows.slice(0,500).forEach(m=>{
+  const tr=tb.insertRow();cell(tr,new Date(m.fecha).toLocaleString("es-MX"));cell(tr,m.producto);cell(tr,m.tipo);
+  cell(tr,(Number(m.cantidad)||0).toLocaleString("es-MX")+" "+(m.unidad||""));
+  cell(tr,(m.antes??"—")+" → "+(m.despues??"—"));
+  cell(tr,[m.motivo,m.referencia,m.nota].filter(Boolean).join(" · "));
+ });
 }
-
-// ==========================================
-// AGREGAR PRODUCTO
-// ==========================================
-
-document.getElementById("formProducto")
-    .addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        try {
-            exigirSesion();
-
-            const categoria =
-                document.getElementById("categoriaNueva").value;
-
-            const nombre =
-                document.getElementById("nombreNuevo").value.trim();
-
-            const presentacion =
-                document.getElementById("presentacionNueva")
-                    .value.trim();
-
-            const unidad =
-                document.getElementById("unidadNueva").value;
-
-            const stock = Number(
-                document.getElementById("cantidadNueva").value
-            );
-
-            if (!Object.hasOwn(categorias, categoria)) {
-                throw new Error("Selecciona una categoría válida.");
-            }
-
-            if (!nombre || !Number.isSafeInteger(stock) || stock < 0) {
-                throw new Error("Revisa el nombre y la cantidad inicial.");
-            }
-
-            const duplicado = inventario.some(p =>
-                p.categoria === categoria &&
-                p.nombre.toLowerCase() === nombre.toLowerCase() &&
-                p.presentacion.toLowerCase() ===
-                    presentacion.toLowerCase()
-            );
-
-            if (duplicado) {
-                throw new Error(
-                    "El producto ya existe. Utiliza Reabastecer."
-                );
-            }
-
-            const producto = {
-                id: crearId(),
-                categoria,
-                nombre,
-                presentacion,
-                unidad,
-                stock
-            };
-
-            inventario.push(producto);
-
-            if (!guardarInventario()) {
-                inventario.pop();
-                return;
-            }
-
-            event.target.reset();
-
-            document.getElementById("cantidadNueva").value = 0;
-
-            renderizar();
-
-            mostrarMensaje("Producto agregado correctamente.");
-
-        } catch (error) {
-            mostrarMensaje(error.message, true);
-        }
-    });
-
-// ==========================================
-// REABASTECER INVENTARIO
-// ==========================================
-
-document.getElementById("formReabastecer")
-    .addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        try {
-            exigirSesion();
-
-            const id =
-                document.getElementById("productoReabastecer").value;
-
-            const cantidad = Number(
-                document.getElementById("cantidadReabastecer").value
-            );
-
-            const producto = inventario.find(p => p.id === id);
-
-            if (!producto) {
-                throw new Error("Selecciona un producto válido.");
-            }
-
-            if (!Number.isSafeInteger(cantidad) || cantidad < 1) {
-                throw new Error("La cantidad debe ser un entero positivo.");
-            }
-
-            if (!Number.isSafeInteger(producto.stock + cantidad)) {
-                throw new Error("La cantidad supera el límite permitido.");
-            }
-
-            producto.stock += cantidad;
-
-            if (!guardarInventario()) {
-                producto.stock -= cantidad;
-                return;
-            }
-
-            event.target.reset();
-
-            renderizar();
-
-            mostrarMensaje(
-                "Entrada registrada: " + producto.nombre +
-                " (+" + cantidad + " " + producto.unidad + ")."
-            );
-
-        } catch (error) {
-            mostrarMensaje(error.message, true);
-        }
-    });
-
-// ==========================================
-// CORREGIR CONTEO FÍSICO
-// ==========================================
-
-document.getElementById("formCorreccion")
-    .addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        try {
-            exigirSesion();
-
-            const id =
-                document.getElementById("productoCorreccion").value;
-
-            const nuevaCantidad = Number(
-                document.getElementById("cantidadCorreccion").value
-            );
-
-            const producto = inventario.find(p => p.id === id);
-
-            if (!producto) {
-                throw new Error("Selecciona un producto válido.");
-            }
-
-            if (
-                !Number.isSafeInteger(nuevaCantidad) ||
-                nuevaCantidad < 0
-            ) {
-                throw new Error("La cantidad debe ser un entero no negativo.");
-            }
-
-            const anterior = producto.stock;
-
-            const confirmar = confirm(
-                "¿Confirmas el conteo físico?\n\n" +
-                "Producto: " + producto.nombre + "\n" +
-                "Existencia anterior: " + anterior + "\n" +
-                "Nueva existencia: " + nuevaCantidad
-            );
-
-            if (!confirmar) return;
-
-            producto.stock = nuevaCantidad;
-
-            if (!guardarInventario()) {
-                producto.stock = anterior;
-                return;
-            }
-
-            renderizar();
-
-            mostrarMensaje("Conteo físico actualizado.");
-
-        } catch (error) {
-            mostrarMensaje(error.message, true);
-        }
-    });
-
-// ==========================================
-// TABLA DE INVENTARIO
-// ==========================================
-
-function renderizar() {
-    if (!sesionActiva) return;
-
-    const tabla = document.getElementById("tablaInventario");
-
-    const filtro =
-        document.getElementById("filtroCategoria").value;
-
-    const busqueda =
-        document.getElementById("buscarProducto")
-            .value.trim().toLowerCase();
-
-    const productos = inventario.filter(p => {
-        const categoriaCorrecta =
-            filtro === "todos" || p.categoria === filtro;
-
-        const texto = (
-            p.nombre + " " + p.presentacion + " " + p.unidad
-        ).toLowerCase();
-
-        return categoriaCorrecta && texto.includes(busqueda);
-    });
-
-    tabla.replaceChildren();
-
-    if (productos.length === 0) {
-        const fila = tabla.insertRow();
-        const celda = fila.insertCell();
-
-        celda.colSpan = 4;
-        celda.className = "empty";
-        celda.textContent = "No hay productos para mostrar.";
-    }
-
-    productos.forEach(p => {
-        const fila = tabla.insertRow();
-
-        agregarCelda(fila, categorias[p.categoria]);
-
-        agregarCelda(
-            fila,
-            p.nombre +
-            (p.presentacion ? " · " + p.presentacion : "")
-        );
-
-        const celdaStock = fila.insertCell();
-
-        celdaStock.textContent = p.stock + " " + p.unidad;
-
-        celdaStock.className =
-            p.stock <= 5 ? "low-stock" : "good-stock";
-
-        const acciones = fila.insertCell();
-
-        const botonEntrada = crearBoton(
-            "+ Entrada",
-            "btn-small",
-            () => {
-                document.getElementById("productoReabastecer").value = p.id;
-
-                document.getElementById("cantidadReabastecer").focus();
-
-                document.getElementById("formReabastecer")
-                    .scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
-                    });
-            }
-        );
-
-        const botonEliminar = crearBoton(
-            "Eliminar",
-            "btn-danger btn-small",
-            () => eliminarProducto(p.id)
-        );
-
-        acciones.append(botonEntrada, botonEliminar);
-    });
-
-    actualizarSelectores();
-    actualizarResumen();
+function renderStats(){
+ $("statProductos").textContent=productos.length;
+ $("statBajos").textContent=productos.filter(p=>p.stock<=p.minimo).length;
+ $("statStock").textContent=productos.reduce((s,p)=>s+(Number(p.stock)||0),0).toLocaleString("es-MX");
+ $("statMovs").textContent=movimientos.length;
 }
+function renderAll(){if(!sesion)return;renderSelectors();renderInventory();renderCategories();renderMovements();renderStats()}
+$("filtroCategoria").addEventListener("change",renderInventory);
+$("buscarProducto").addEventListener("input",renderInventory);
+$("filtroMovimiento").addEventListener("change",renderMovements);
+$("buscarMovimiento").addEventListener("input",renderMovements);
 
-function agregarCelda(fila, texto) {
-    const celda = fila.insertCell();
-    celda.textContent = texto;
-    return celda;
+function exportarRespaldo(){
+ try{
+  requireLogin();
+  const data={sistema:"VENTHA Micheladas",version:2,fechaExportacion:new Date().toISOString(),categorias,unidades,productos,movimientos};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="respaldo_ventha_"+new Date().toISOString().slice(0,10)+".json";a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);msg("Respaldo exportado.");
+ }catch(e){msg(e.message,true)}
 }
-
-function crearBoton(texto, clase, accion) {
-    const boton = document.createElement("button");
-
-    boton.type = "button";
-    boton.textContent = texto;
-    boton.className = clase;
-    boton.addEventListener("click", accion);
-
-    return boton;
+async function importarRespaldo(){
+ try{
+  requireLogin();const file=$("archivoImportar").files[0];if(!file)throw Error("Selecciona un archivo JSON.");
+  if(!confirm("Esto reemplazará categorías, unidades, productos y movimientos actuales. ¿Continuar?"))return;
+  const d=JSON.parse(await file.text());
+  if(!Array.isArray(d.categorias)||!Array.isArray(d.unidades)||!Array.isArray(d.productos)||!Array.isArray(d.movimientos))throw Error("El archivo no es un respaldo completo de VENTHA.");
+  const old={categorias,unidades,productos,movimientos};
+  categorias=d.categorias;unidades=d.unidades;productos=d.productos;movimientos=d.movimientos;
+  if(!saveAll()){Object.assign(window,old);throw Error("No se pudo guardar el respaldo importado.")}
+  renderAll();msg("Respaldo importado correctamente.");
+ }catch(e){msg(e.message,true)}
 }
-
-// ==========================================
-// LISTAS DE PRODUCTOS
-// ==========================================
-
-function actualizarSelectores() {
-    const ids = [
-        "productoReabastecer",
-        "productoCorreccion"
-    ];
-
-    ids.forEach(id => {
-        const selector = document.getElementById(id);
-        const anterior = selector.value;
-
-        selector.replaceChildren();
-
-        const inicial = document.createElement("option");
-
-        inicial.value = "";
-        inicial.textContent = "Selecciona un producto";
-
-        selector.appendChild(inicial);
-
-        inventario.forEach(p => {
-            const opcion = document.createElement("option");
-
-            opcion.value = p.id;
-
-            opcion.textContent =
-                categorias[p.categoria] + " · " +
-                p.nombre +
-                (p.presentacion ? " · " + p.presentacion : "") +
-                " (" + p.stock + " " + p.unidad + ")";
-
-            selector.appendChild(opcion);
-        });
-
-        if (inventario.some(p => p.id === anterior)) {
-            selector.value = anterior;
-        }
-    });
-}
-
-// ==========================================
-// INDICADORES
-// ==========================================
-
-function actualizarResumen() {
-    const sumar = categoria =>
-        inventario
-            .filter(p => p.categoria === categoria)
-            .reduce((total, p) => total + p.stock, 0);
-
-    document.getElementById("totalProductos").textContent =
-        inventario.length;
-
-    document.getElementById("totalMega").textContent =
-        sumar("mega");
-
-    document.getElementById("totalMedias").textContent =
-        sumar("media");
-
-    document.getElementById("totalVasos").textContent =
-        sumar("vaso");
-}
-
-// ==========================================
-// ELIMINAR PRODUCTO
-// ==========================================
-
-function eliminarProducto(id) {
-    try {
-        exigirSesion();
-
-        const indice = inventario.findIndex(p => p.id === id);
-
-        if (indice < 0) return;
-
-        const producto = inventario[indice];
-
-        if (!confirm(
-            "¿Eliminar " + producto.nombre +
-            " del catálogo?\nEsta acción no registra una salida."
-        )) return;
-
-        inventario.splice(indice, 1);
-
-        if (!guardarInventario()) {
-            inventario.splice(indice, 0, producto);
-            return;
-        }
-
-        renderizar();
-
-        mostrarMensaje("Producto eliminado del catálogo.");
-
-    } catch (error) {
-        mostrarMensaje(error.message, true);
-    }
-}
-
-// ==========================================
-// EXPORTAR RESPALDO
-// ==========================================
-
-function exportarRespaldo() {
-    try {
-        exigirSesion();
-
-        const datos = {
-            sistema: "VENTHA Micheladas",
-            version: "1.0",
-            fechaExportacion: new Date().toISOString(),
-            inventario
-        };
-
-        const archivo = new Blob(
-            [JSON.stringify(datos, null, 2)],
-            { type: "application/json" }
-        );
-
-        const url = URL.createObjectURL(archivo);
-        const enlace = document.createElement("a");
-
-        enlace.href = url;
-        enlace.download = "respaldo_inventario_ventha.json";
-
-        enlace.click();
-
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-
-        mostrarMensaje("Respaldo preparado para guardar.");
-
-    } catch (error) {
-        mostrarMensaje(error.message, true);
-    }
-}
-
-// ==========================================
-// FILTROS
-// ==========================================
-
-document.getElementById("filtroCategoria")
-    .addEventListener("change", renderizar);
-
-document.getElementById("buscarProducto")
-    .addEventListener("input", renderizar);
-
 </script>
-
 </body>
 </html>
-
