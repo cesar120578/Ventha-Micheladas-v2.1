@@ -316,6 +316,10 @@ const unidadesIniciales = [
 let categorias = cargar(KEYS.categorias,categoriasIniciales);
 let unidades = cargar(KEYS.unidades,unidadesIniciales);
 let presentaciones = cargar(KEYS.presentaciones,[]);
+if(!Array.isArray(presentaciones)) presentaciones = [];
+if(presentaciones.length===0) {
+  presentaciones = ['botella 1.2 L','lata 355 ml','cartón de 12'];
+}
 let productos = cargar(KEYS.productos,[]);
 let movimientos = cargar(KEYS.movimientos,[]);
 let sesion = false;
