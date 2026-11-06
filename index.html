@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -66,8 +64,8 @@ footer{color:#777;text-align:center;font-size:12px;padding:22px}
   <h2>Iniciar sesión</h2>
   <p class="note">Acceso provisional para el prototipo.</p>
   <form id="loginForm">
-    <label>Usuario
-      <input id="usuarioInput" autocomplete="username" required>
+    <label>Correo electrónico
+      <input id="usuarioInput" type="email" autocomplete="username" required>
     </label>
     <label>Contraseña
       <input id="claveInput" type="password" autocomplete="current-password" required>
@@ -75,7 +73,6 @@ footer{color:#777;text-align:center;font-size:12px;padding:22px}
     <button type="submit" style="width:100%">Ingresar</button>
   </form>
   <p id="loginError" class="danger-text"></p>
-  <p class="note">Usuario: admin · Contraseña: RDM2026!</p>
 </section>
 
 <div id="sistema" class="hidden">
@@ -289,11 +286,33 @@ footer{color:#777;text-align:center;font-size:12px;padding:22px}
 </main>
 <footer>VENTHA · GRUPO RDM · Prototipo administrativo</footer>
 
+<!-- Firebase SDK (compat): se añade sin convertir el código actual en módulos. -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
 <script>
 'use strict';
 
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'RDM2026!';
+// Firebase: conexión de autenticación y lectura del perfil del usuario.
+// En esta primera etapa NO se modifica el almacenamiento local ni el CRUD.
+const firebaseConfig = {
+  apiKey: "AIzaSyAhHYvFMrxkmP8vAw2Db6oAEbg91RxCpBE",
+  authDomain: "ventha-micheladas.firebaseapp.com",
+  projectId: "ventha-micheladas",
+  storageBucket: "ventha-micheladas.firebasestorage.app",
+  messagingSenderId: "935392685400",
+  appId: "1:935392685400:web:af846f38b00fbc320f092d"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
 
 const KEYS = {
   categorias: 'venthaMicheladasCategoriasV2',
@@ -1023,25 +1042,94 @@ async function importarRespaldo() {
   }
 }
 
-$('loginForm').addEventListener('submit',e=>{
-  e.preventDefault();
+function mostrarSistema() {
+  sesion = true;
+  $('loginBox').classList.add('hidden');
+  $('sistema').classList.remove('hidden');
+  actualizarTodo();
+}
 
-  if($('usuarioInput').value.trim()===ADMIN_USER &&
-     $('claveInput').value===ADMIN_PASS) {
-    sesion = true;
-    $('loginBox').classList.add('hidden');
-    $('sistema').classList.remove('hidden');
-    actualizarTodo();
-  } else {
-    $('loginError').textContent = 'Usuario o contraseña incorrectos.';
-  }
-});
-
-function cerrarSesion() {
+function mostrarLogin() {
   sesion = false;
   $('sistema').classList.add('hidden');
   $('loginBox').classList.remove('hidden');
-  $('claveInput').value = '';
+}
+
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  $('loginError').textContent = '';
+
+  const correo = $('usuarioInput').value.trim();
+  const clave = $('claveInput').value;
+
+  try {
+    const credencial = await auth.signInWithEmailAndPassword(correo,clave);
+    const usuario = credencial.user;
+    const perfilRef = await db.collection('usuarios').doc(usuario.uid).get();
+
+    if (!perfilRef.exists) {
+      await auth.signOut();
+      throw Error('La cuenta inició sesión, pero no tiene un perfil registrado en VENTHA.');
+    }
+
+    const perfil = perfilRef.data();
+
+    if (perfil.activo !== true || perfil.rol !== 'admin') {
+      await auth.signOut();
+      throw Error('Esta cuenta no tiene permisos de administrador activos.');
+    }
+
+    mostrarSistema();
+  } catch(error) {
+    $('loginError').textContent =
+      error.code === 'auth/invalid-credential' ||
+      error.code === 'auth/wrong-password' ||
+      error.code === 'auth/user-not-found'
+        ? 'Correo o contraseña incorrectos.'
+        : (error.message || 'No fue posible iniciar sesión.');
+  }
+});
+
+// Mantiene la sesión al recargar la página y valida nuevamente el perfil.
+auth.onAuthStateChanged(async usuario=>{
+  if (!usuario) {
+    mostrarLogin();
+    return;
+  }
+
+  try {
+    const perfilRef = await db.collection('usuarios').doc(usuario.uid).get();
+
+    if (!perfilRef.exists) {
+      await auth.signOut();
+      $('loginError').textContent = 'La cuenta no tiene un perfil registrado en VENTHA.';
+      return;
+    }
+
+    const perfil = perfilRef.data();
+
+    if (perfil.activo !== true || perfil.rol !== 'admin') {
+      await auth.signOut();
+      $('loginError').textContent = 'Esta cuenta no tiene permisos de administrador activos.';
+      return;
+    }
+
+    mostrarSistema();
+  } catch(error) {
+    console.error('No se pudo validar el perfil de VENTHA:',error);
+    $('loginError').textContent = 'No se pudo validar el acceso. Verifica tu conexión e inténtalo de nuevo.';
+    mostrarLogin();
+  }
+});
+
+async function cerrarSesion() {
+  try {
+    await auth.signOut();
+    $('claveInput').value = '';
+    $('loginError').textContent = '';
+  } catch(error) {
+    mensaje('No fue posible cerrar sesión: '+(error.message||''),true);
+  }
 }
 
 document.querySelectorAll('[data-tab]').forEach(b=>{
