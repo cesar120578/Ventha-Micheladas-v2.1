@@ -407,7 +407,7 @@ function registrarMovimiento(p,tipo,cantidad,antes,despues,motivo,referencia='',
     tipo,cantidad,
     unidad:p?.unidad || '',
     antes,despues,motivo,referencia,nota,
-    usuario:ADMIN_USER
+    usuario:auth.currentUser?.email || 'admin'
   });
 }
 
