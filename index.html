@@ -324,6 +324,196 @@ if (!firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// =====================================================
+// CAPA CENTRAL DE DATOS DE VENTHA
+// Todas las futuras herramientas deben utilizar este servicio
+// para consultar y modificar Firestore, en lugar de conectarse
+// directamente a la base de datos desde cada módulo.
+// Esta incorporación no cambia todavía el CRUD local existente.
+// =====================================================
+const VenthaData = (() => {
+  const COLECCIONES = Object.freeze([
+    'categorias',
+    'unidades',
+    'presentaciones',
+    'productos',
+    'movimientos'
+  ]);
+
+  function validarColeccion(nombre) {
+    if (!COLECCIONES.includes(nombre)) {
+      throw new Error('Colección no permitida en VenthaData: ' + nombre);
+    }
+    return db.collection(nombre);
+  }
+
+  async function validarAdministrador() {
+    const usuario = auth.currentUser;
+    if (!usuario) throw new Error('Debes iniciar sesión.');
+
+    const perfil = await db.collection('usuarios').doc(usuario.uid).get();
+    if (!perfil.exists || perfil.data().activo !== true || perfil.data().rol !== 'admin') {
+      throw new Error('Se requiere una cuenta de administrador activa.');
+    }
+    return usuario;
+  }
+
+  async function obtenerColeccion(nombre) {
+    await validarAdministrador();
+    const consulta = await validarColeccion(nombre).get();
+    return consulta.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
+  function escucharColeccion(nombre, alCambiar, alError = console.error) {
+    if (typeof alCambiar !== 'function') {
+      throw new Error('Debes proporcionar una función para recibir los datos.');
+    }
+
+    let cancelado = false;
+    let detener = null;
+
+    validarAdministrador()
+      .then(() => {
+        if (cancelado) return;
+        detener = validarColeccion(nombre).onSnapshot(
+          snapshot => {
+            if (cancelado) return;
+            const documentos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            alCambiar(documentos);
+          },
+          error => {
+            if (!cancelado) alError(error);
+          }
+        );
+      })
+      .catch(error => {
+        if (!cancelado) alError(error);
+      });
+
+    return () => {
+      cancelado = true;
+      if (detener) detener();
+    };
+  }
+
+  async function guardarDocumento(nombre, id, datos, opciones = {}) {
+    await validarAdministrador();
+    if (!id || typeof id !== 'string') {
+      throw new Error('El documento necesita un identificador de texto.');
+    }
+    if (!datos || typeof datos !== 'object' || Array.isArray(datos)) {
+      throw new Error('Los datos del documento no son válidos.');
+    }
+
+    const referencia = validarColeccion(nombre).doc(id);
+    const contenido = { ...datos };
+    if (opciones.merge === true) {
+      await referencia.set(contenido, { merge: true });
+    } else {
+      await referencia.set(contenido);
+    }
+    return id;
+  }
+
+  async function eliminarDocumento(nombre, id) {
+    await validarAdministrador();
+    if (!id || typeof id !== 'string') {
+      throw new Error('El documento necesita un identificador de texto.');
+    }
+    await validarColeccion(nombre).doc(id).delete();
+    return true;
+  }
+
+  async function guardarLote(documentos) {
+    await validarAdministrador();
+    if (!Array.isArray(documentos) || documentos.length === 0) {
+      throw new Error('No hay documentos para guardar.');
+    }
+    if (documentos.length > 450) {
+      throw new Error('El lote supera el límite preventivo de 450 documentos.');
+    }
+
+    const lote = db.batch();
+    documentos.forEach(documento => {
+      if (!documento || !documento.coleccion || !documento.id ||
+          typeof documento.id !== 'string' || !documento.datos ||
+          typeof documento.datos !== 'object' || Array.isArray(documento.datos)) {
+        throw new Error('Se encontró un documento inválido dentro del lote.');
+      }
+      lote.set(
+        validarColeccion(documento.coleccion).doc(documento.id),
+        { ...documento.datos }
+      );
+    });
+
+    await lote.commit();
+    return documentos.length;
+  }
+
+  // Suscripción coordinada: entrega un único objeto con las cinco
+  // colecciones y actualiza su contenido cuando Firestore cambia.
+  function escucharInventario(alCambiar, alError = console.error) {
+    const datos = {
+      categorias: [],
+      unidades: [],
+      presentaciones: [],
+      productos: [],
+      movimientos: []
+    };
+    const listas = new Set();
+    const canceladores = [];
+    let cancelado = false;
+
+    const detenerTodo = () => {
+      cancelado = true;
+      canceladores.forEach(detener => detener());
+    };
+
+    validarAdministrador()
+      .then(() => {
+        if (cancelado) return;
+        COLECCIONES.forEach(nombre => {
+          const detener = validarColeccion(nombre).onSnapshot(
+            snapshot => {
+              if (cancelado) return;
+              datos[nombre] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+              listas.add(nombre);
+              if (listas.size === COLECCIONES.length) {
+                alCambiar({
+                  categorias: [...datos.categorias],
+                  unidades: [...datos.unidades],
+                  presentaciones: [...datos.presentaciones],
+                  productos: [...datos.productos],
+                  movimientos: [...datos.movimientos]
+                });
+              }
+            },
+            error => {
+              if (!cancelado) alError(error);
+            }
+          );
+          canceladores.push(detener);
+        });
+      })
+      .catch(error => {
+        if (!cancelado) alError(error);
+      });
+
+    return detenerTodo;
+  }
+
+  return Object.freeze({
+    colecciones: COLECCIONES,
+    validarAdministrador,
+    obtenerColeccion,
+    escucharColeccion,
+    escucharInventario,
+    guardarDocumento,
+    eliminarDocumento,
+    guardarLote
+  });
+})();
+
 
 
 const KEYS = {
