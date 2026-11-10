@@ -276,6 +276,18 @@ footer{color:#777;text-align:center;font-size:12px;padding:22px}
 <p class="note">Descarga un respaldo JSON de tus datos y guárdalo en un lugar seguro.</p>
 <button type="button" onclick="exportarRespaldo()">Exportar respaldo completo</button>
 <hr style="border-color:#444;margin:22px 0">
+
+<h2>Migración a Firebase</h2>
+<p class="note">
+  Transfiere las categorías, unidades, presentaciones, productos y movimientos
+  guardados en este navegador hacia la base de datos de VENTHA.
+</p>
+
+<button type="button" onclick="migrarDatosAFirestore()">
+  Migrar inventario a Firebase
+</button>
+
+<hr style="border-color:#444;margin:22px 0">
 <label>Importar respaldo JSON
   <input id="archivoImportar" type="file" accept="application/json,.json">
 </label>
@@ -1039,6 +1051,150 @@ async function importarRespaldo() {
     mensaje('Respaldo importado correctamente.');
   } catch(error) {
     mensaje(error.message||'No se pudo importar el respaldo.',true);
+  }
+}
+
+// =====================================================
+// MIGRACIÓN INICIAL DE VENTHA A FIRESTORE
+// Conserva los datos originales de localStorage.
+// Ejecutar una sola vez, con las colecciones vacías.
+// =====================================================
+async function migrarDatosAFirestore() {
+  if (!auth.currentUser) {
+    return mensaje('Debes iniciar sesión para migrar los datos.', true);
+  }
+
+  const confirmar = confirm(
+    '¿Deseas migrar los datos de este navegador a Firebase?\\n\\n' +
+    'Se transferirán categorías, unidades, presentaciones, productos y movimientos.\\n\\n' +
+    'No se eliminarán los datos locales.'
+  );
+
+  if (!confirmar) return;
+
+  try {
+    mensaje('Verificando la base de datos de Firebase...');
+
+    // Verificar que la cuenta siga siendo un administrador activo.
+    const perfilRef = await db.collection('usuarios')
+      .doc(auth.currentUser.uid).get();
+
+    if (
+      !perfilRef.exists ||
+      perfilRef.data().activo !== true ||
+      perfilRef.data().rol !== 'admin'
+    ) {
+      throw new Error('No tienes permisos de administrador para realizar esta operación.');
+    }
+
+    const colecciones = [
+      'categorias',
+      'unidades',
+      'presentaciones',
+      'productos',
+      'movimientos'
+    ];
+
+    // Detenerse si alguna colección ya contiene documentos.
+    // Así evitamos mezclar o sobrescribir información existente.
+    for (const nombre of colecciones) {
+      const consulta = await db.collection(nombre).limit(1).get();
+
+      if (!consulta.empty) {
+        throw new Error(
+          'La colección "' + nombre +
+          '" ya contiene información. Se canceló la migración para evitar sobrescribir datos.'
+        );
+      }
+    }
+
+    const documentos = [];
+
+    categorias.forEach(c => {
+      if (!c.id) throw new Error('Hay una categoría sin identificador.');
+      documentos.push({
+        coleccion: 'categorias',
+        id: String(c.id),
+        datos: { ...c }
+      });
+    });
+
+    unidades.forEach((u, indice) => {
+      const nombre = String(u).trim();
+      if (!nombre) throw new Error('Hay una unidad vacía.');
+      documentos.push({
+        coleccion: 'unidades',
+        id: 'unidad_' + encodeURIComponent(nombre),
+        datos: { nombre, orden: indice }
+      });
+    });
+
+    presentaciones.forEach((p, indice) => {
+      const nombre = String(p).trim();
+      if (!nombre) throw new Error('Hay una presentación vacía.');
+      documentos.push({
+        coleccion: 'presentaciones',
+        id: 'presentacion_' + encodeURIComponent(nombre),
+        datos: { nombre, orden: indice }
+      });
+    });
+
+    productos.forEach(p => {
+      if (!p.id) throw new Error('Hay un producto sin identificador.');
+      documentos.push({
+        coleccion: 'productos',
+        id: String(p.id),
+        datos: { ...p }
+      });
+    });
+
+    movimientos.forEach(m => {
+      if (!m.id) throw new Error('Hay un movimiento sin identificador.');
+      documentos.push({
+        coleccion: 'movimientos',
+        id: String(m.id),
+        datos: { ...m }
+      });
+    });
+
+    // El límite preventivo evita superar el máximo de 500 escrituras por lote.
+    if (documentos.length > 450) {
+      throw new Error(
+        'La migración contiene ' + documentos.length +
+        ' documentos. Supera el límite preventivo de 450. ' +
+        'No se escribió ningún dato; prepararemos una migración por bloques.'
+      );
+    }
+
+    mensaje('Transfiriendo ' + documentos.length + ' documentos a Firebase...');
+
+    const lote = db.batch();
+
+    documentos.forEach(documento => {
+      const referencia = db.collection(documento.coleccion).doc(documento.id);
+      lote.set(referencia, documento.datos);
+    });
+
+    await lote.commit();
+
+    mensaje(
+      '¡Migración completada! Se transfirieron ' +
+      documentos.length + ' documentos a Firebase.'
+    );
+
+    alert(
+      '¡Migración completada correctamente!\\n\\n' +
+      'Documentos transferidos: ' + documentos.length +
+      '\\n\\nTus datos locales se conservaron.'
+    );
+
+  } catch (error) {
+    console.error('Error durante la migración:', error);
+    mensaje(error.message || 'No se pudo completar la migración.', true);
+    alert(
+      'No se completó la migración:\\n\\n' +
+      (error.message || 'Error desconocido.')
+    );
   }
 }
 
