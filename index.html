@@ -361,7 +361,7 @@ const VenthaData = (() => {
   async function obtenerColeccion(nombre) {
     await validarAdministrador();
     const consulta = await validarColeccion(nombre).get();
-    return consulta.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return consulta.docs.map(doc => ({ ...doc.data(), id: doc.id }));
   }
 
   function escucharColeccion(nombre, alCambiar, alError = console.error) {
@@ -378,7 +378,7 @@ const VenthaData = (() => {
         detener = validarColeccion(nombre).onSnapshot(
           snapshot => {
             if (cancelado) return;
-            const documentos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const documentos = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
             alCambiar(documentos);
           },
           error => {
@@ -450,6 +450,33 @@ const VenthaData = (() => {
     return documentos.length;
   }
 
+  async function aplicarCambios(cambios) {
+    await validarAdministrador();
+    if (!Array.isArray(cambios) || cambios.length === 0) return 0;
+    if (cambios.length > 450) {
+      throw new Error('La sincronización supera el límite preventivo de 450 cambios.');
+    }
+
+    const lote = db.batch();
+    cambios.forEach(cambio => {
+      if (!cambio || !cambio.coleccion || !cambio.id || typeof cambio.id !== 'string') {
+        throw new Error('Se encontró un cambio inválido durante la sincronización.');
+      }
+      const referencia = validarColeccion(cambio.coleccion).doc(cambio.id);
+      if (cambio.tipo === 'eliminar') {
+        lote.delete(referencia);
+      } else if (cambio.tipo === 'guardar' && cambio.datos &&
+                 typeof cambio.datos === 'object' && !Array.isArray(cambio.datos)) {
+        lote.set(referencia, { ...cambio.datos });
+      } else {
+        throw new Error('Tipo de cambio no válido durante la sincronización.');
+      }
+    });
+
+    await lote.commit();
+    return cambios.length;
+  }
+
   // Suscripción coordinada: entrega un único objeto con las cinco
   // colecciones y actualiza su contenido cuando Firestore cambia.
   function escucharInventario(alCambiar, alError = console.error) {
@@ -476,7 +503,15 @@ const VenthaData = (() => {
           const detener = validarColeccion(nombre).onSnapshot(
             snapshot => {
               if (cancelado) return;
-              datos[nombre] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+              const documentos = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+              if (nombre === 'unidades' || nombre === 'presentaciones') {
+                datos[nombre] = documentos
+                  .sort((a, b) => Number(a.orden || 0) - Number(b.orden || 0))
+                  .map(documento => String(documento.nombre || '').trim())
+                  .filter(Boolean);
+              } else {
+                datos[nombre] = documentos;
+              }
               listas.add(nombre);
               if (listas.size === COLECCIONES.length) {
                 alCambiar({
@@ -510,7 +545,8 @@ const VenthaData = (() => {
     escucharInventario,
     guardarDocumento,
     eliminarDocumento,
-    guardarLote
+    guardarLote,
+    aplicarCambios
   });
 })();
 
@@ -550,6 +586,14 @@ let productos = cargar(KEYS.productos,[]);
 let movimientos = cargar(KEYS.movimientos,[]);
 let sesion = false;
 
+// Estado de sincronización: localStorage conserva el respaldo y Firestore
+// es la fuente compartida cuando la sesión de administrador está activa.
+let nubeLista = false;
+let detenerInventarioNube = null;
+let ultimoEstadoNube = null;
+let colaSincronizacionNube = Promise.resolve();
+let sincronizacionEnCurso = false;
+
 const $ = id => document.getElementById(id);
 
 function clonar(valor) {
@@ -578,7 +622,17 @@ function mensaje(texto,error=false) {
   elemento.style.color = error ? '#ff7777' : '#81c784';
 }
 
-function guardarTodo() {
+function estadoActualVentha() {
+  return {
+    categorias: clonar(categorias),
+    unidades: clonar(unidades),
+    presentaciones: clonar(presentaciones),
+    productos: clonar(productos),
+    movimientos: clonar(movimientos)
+  };
+}
+
+function guardarTodoLocal() {
   try {
     localStorage.setItem(KEYS.categorias,JSON.stringify(categorias));
     localStorage.setItem(KEYS.unidades,JSON.stringify(unidades));
@@ -590,6 +644,117 @@ function guardarTodo() {
     mensaje('No se pudieron guardar los datos. Exporta un respaldo.',true);
     return false;
   }
+}
+
+function idListaFirestore(tipo,nombre) {
+  return (tipo === 'unidades' ? 'unidad_' : 'presentacion_') + encodeURIComponent(nombre);
+}
+
+function prepararCambiosColeccion(tipo, actual, anterior, cambios) {
+  if (tipo === 'unidades' || tipo === 'presentaciones') {
+    const prefijo = tipo === 'unidades' ? 'unidad_' : 'presentacion_';
+    const actuales = new Map(actual.map((nombre,orden)=>[
+      idListaFirestore(tipo,nombre), { nombre, orden }
+    ]));
+    const previos = new Map(anterior.map((nombre,orden)=>[
+      idListaFirestore(tipo,nombre), { nombre, orden }
+    ]));
+
+    actuales.forEach((datos,id)=>{
+      const previo = previos.get(id);
+      if (!previo || previo.nombre !== datos.nombre || previo.orden !== datos.orden) {
+        cambios.push({ tipo:'guardar', coleccion:tipo, id, datos });
+      }
+    });
+    previos.forEach((datos,id)=>{
+      if (!actuales.has(id)) cambios.push({ tipo:'eliminar', coleccion:tipo, id });
+    });
+    return;
+  }
+
+  const actuales = new Map(actual.map(documento=>[String(documento.id),documento]));
+  const previos = new Map(anterior.map(documento=>[String(documento.id),documento]));
+
+  actuales.forEach((documento,id)=>{
+    const previo = previos.get(id);
+    if (!previo || JSON.stringify(previo) !== JSON.stringify(documento)) {
+      const datos = { ...documento };
+      delete datos.id;
+      cambios.push({ tipo:'guardar', coleccion:tipo, id, datos });
+    }
+  });
+  previos.forEach((documento,id)=>{
+    if (!actuales.has(id)) cambios.push({ tipo:'eliminar', coleccion:tipo, id });
+  });
+}
+
+async function sincronizarEstadoConNube(estado) {
+  if (!nubeLista || !ultimoEstadoNube || !auth.currentUser) return;
+
+  const cambios = [];
+  ['categorias','unidades','presentaciones','productos','movimientos'].forEach(tipo=>{
+    prepararCambiosColeccion(tipo,estado[tipo],ultimoEstadoNube[tipo],cambios);
+  });
+
+  if (!cambios.length) return;
+  sincronizacionEnCurso = true;
+  try {
+    await VenthaData.aplicarCambios(cambios);
+    ultimoEstadoNube = clonar(estado);
+    mensaje('Cambios guardados y sincronizados con Firebase.');
+  } catch(error) {
+    console.error('No se pudieron sincronizar los cambios de VENTHA:',error);
+    mensaje('Los cambios quedaron en este dispositivo, pero no se pudieron sincronizar con Firebase: ' + (error.message || 'Error de conexión.'),true);
+  } finally {
+    sincronizacionEnCurso = false;
+  }
+}
+
+function programarSincronizacionNube() {
+  if (!nubeLista || !auth.currentUser) return;
+  const estado = estadoActualVentha();
+  colaSincronizacionNube = colaSincronizacionNube
+    .then(()=>sincronizarEstadoConNube(estado))
+    .catch(error=>{
+      console.error('Error en la cola de sincronización:',error);
+      mensaje('No se pudo completar la sincronización con Firebase.',true);
+    });
+}
+
+function guardarTodo() {
+  if (!guardarTodoLocal()) return false;
+  programarSincronizacionNube();
+  return true;
+}
+
+function iniciarSincronizacionNube() {
+  if (detenerInventarioNube) detenerInventarioNube();
+  nubeLista = false;
+  detenerInventarioNube = VenthaData.escucharInventario(datos=>{
+    // Firestore entrega unidades y presentaciones como documentos, pero
+    // el resto de la aplicación trabaja con arreglos de texto.
+    categorias = datos.categorias;
+    unidades = datos.unidades;
+    presentaciones = datos.presentaciones;
+    productos = datos.productos;
+    movimientos = datos.movimientos;
+
+    ultimoEstadoNube = estadoActualVentha();
+    nubeLista = true;
+    guardarTodoLocal();
+    actualizarTodo();
+    mensaje('VENTHA está conectado. Inventario sincronizado en tiempo real.');
+  },error=>{
+    console.error('Error escuchando los cambios de Firebase:',error);
+    mensaje('No se pudo mantener la sincronización en tiempo real: ' + (error.message || 'Verifica tu conexión.'),true);
+  });
+}
+
+function detenerSincronizacionNube() {
+  if (detenerInventarioNube) detenerInventarioNube();
+  detenerInventarioNube = null;
+  nubeLista = false;
+  ultimoEstadoNube = null;
 }
 
 function nombreCategoria(id) {
@@ -1393,10 +1558,12 @@ function mostrarSistema() {
   $('loginBox').classList.add('hidden');
   $('sistema').classList.remove('hidden');
   actualizarTodo();
+  iniciarSincronizacionNube();
 }
 
 function mostrarLogin() {
   sesion = false;
+  detenerSincronizacionNube();
   $('sistema').classList.add('hidden');
   $('loginBox').classList.remove('hidden');
 }
