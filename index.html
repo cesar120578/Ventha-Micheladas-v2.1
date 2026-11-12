@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -712,9 +713,10 @@ async function sincronizarEstadoConNube(estado) {
 
 function programarSincronizacionNube() {
   if (!nubeLista || !auth.currentUser) return;
-  const estado = estadoActualVentha();
+  // Captura el estado al momento de ejecutar cada tarea, no al momento
+  // de encolarla. Así, una edición posterior no se pierde por una tarea vieja.
   colaSincronizacionNube = colaSincronizacionNube
-    .then(()=>sincronizarEstadoConNube(estado))
+    .then(()=>sincronizarEstadoConNube(estadoActualVentha()))
     .catch(error=>{
       console.error('Error en la cola de sincronización:',error);
       mensaje('No se pudo completar la sincronización con Firebase.',true);
@@ -1554,11 +1556,13 @@ async function migrarDatosAFirestore() {
 }
 
 function mostrarSistema() {
+  const yaEstabaVisible = sesion;
   sesion = true;
   $('loginBox').classList.add('hidden');
   $('sistema').classList.remove('hidden');
   actualizarTodo();
-  iniciarSincronizacionNube();
+  // Evita abrir dos grupos de listeners para la misma sesión.
+  if (!yaEstabaVisible || !detenerInventarioNube) iniciarSincronizacionNube();
 }
 
 function mostrarLogin() {
@@ -1592,7 +1596,7 @@ $('loginForm').addEventListener('submit',async e=>{
       throw Error('Esta cuenta no tiene permisos de administrador activos.');
     }
 
-    mostrarSistema();
+    // onAuthStateChanged valida la sesión y abre el sistema una sola vez.
   } catch(error) {
     $('loginError').textContent =
       error.code === 'auth/invalid-credential' ||
